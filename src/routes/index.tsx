@@ -116,47 +116,6 @@ function Stat({
   );
 }
 
-function TiltCard() {
-  const ref = useRef<HTMLDivElement>(null);
-  const onMove = (e: React.MouseEvent) => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5;
-    const y = (e.clientY - r.top) / r.height - 0.5;
-    el.style.transform = `perspective(1000px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`;
-  };
-  const onLeave = () => {
-    if (ref.current) ref.current.style.transform = "perspective(1000px) rotateY(0) rotateX(0)";
-  };
-  return (
-    <div
-      ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      className="glass-strong rounded-3xl p-3 transition-transform duration-300 will-change-transform"
-      style={{ transformStyle: "preserve-3d" }}
-    >
-      <div className="grid grid-cols-3 gap-2 rounded-2xl overflow-hidden">
-        {STATE_LIST.slice(0, 6).map((s, i) => (
-          <div
-            key={s.id}
-            className="aspect-square rounded-xl flex items-end p-2"
-            style={{
-              background: s.thumbGradient,
-              animation: `float ${4 + i * 0.4}s ease-in-out ${i * 0.2}s infinite`,
-            }}
-          >
-            <span className="text-[10px] font-semibold text-foreground/70 bg-white/60 backdrop-blur rounded-full px-2 py-0.5">
-              {s.name}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function Index() {
   const features = [
     {
@@ -239,25 +198,22 @@ function Index() {
 
       {/* MISSION */}
       <section className="mx-auto max-w-7xl px-6 py-24 mandala-bg">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          <div className="animate-fade-up">
-            <div className="text-xs uppercase tracking-[0.22em] text-saffron-deep font-semibold mb-4">
-              What is Bharat Virasat?
-            </div>
-            <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight mb-6">
-              An archive that <span className="text-shimmer">breathes</span> with India's culture.
-            </h2>
-            <p className="text-foreground/75 text-lg leading-relaxed mb-4">
-              India is not one story — it is thirty thousand. Bharat Virasat is a digital museum
-              without walls, where every state contributes its own chapter of festivals, recipes,
-              dances and dialects.
-            </p>
-            <p className="text-foreground/70 leading-relaxed">
-              Whether you're a curious traveler, a homesick diaspora, or simply someone who wants to
-              understand a country of a billion stories — start here.
-            </p>
+        <div className="animate-fade-up">
+          <div className="text-xs uppercase tracking-[0.22em] text-saffron-deep font-semibold mb-4">
+            What is Bharat Virasat?
           </div>
-          <TiltCard />
+          <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight mb-6">
+            An archive that <span className="text-shimmer">breathes</span> with India's culture.
+          </h2>
+          <p className="text-foreground/75 text-lg leading-relaxed mb-4">
+            India is not one story — it is thirty thousand. Bharat Virasat is a digital museum
+            without walls, where every state contributes its own chapter of festivals, recipes,
+            dances and dialects.
+          </p>
+          <p className="text-foreground/70 leading-relaxed">
+            Whether you're a curious traveler, a homesick diaspora, or simply someone who wants to
+            understand a country of a billion stories — start here.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mt-20">
@@ -312,7 +268,7 @@ function Index() {
               style={{ animation: `scale-in 0.5s ease-out ${i * 0.08}s both` }}
             >
               <StateCardImage
-                src={s.cardImage}
+                src={s.image}
                 alt={s.name}
                 className="absolute inset-0 h-full w-full object-cover"
               />

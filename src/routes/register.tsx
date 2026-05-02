@@ -138,7 +138,7 @@ function RegisterPage() {
                         className={`relative h-24 rounded-xl overflow-hidden text-left transition-all ${on ? "ring-2 ring-saffron-deep ring-offset-2" : "hover:scale-105"}`}
                       >
                         <StateCardImage
-                          src={s.cardImage}
+                          src={s.image}
                           alt={s.name}
                           className="absolute inset-0 h-full w-full object-cover"
                         />

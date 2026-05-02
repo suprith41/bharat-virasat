@@ -1,8 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ChevronRight, MapPin, Languages, Star, Landmark, Sparkles } from "lucide-react";
+import { StateCardImage } from "@/components/StateCardImage";
 import { STATES, type CulturalItem } from "@/data/states";
 import { resolveStateFromParam } from "@/lib/stateRouting";
+import usePexelsImage from "@/hooks/usePexelsImage";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/state/$id")({
   loader: ({ params }) => {
@@ -20,6 +23,8 @@ export const Route = createFileRoute("/state/$id")({
           },
           { property: "og:title", content: `${loaderData.state.name} — Bharat Virasat` },
           { property: "og:description", content: loaderData.state.tagline },
+          { property: "og:image", content: loaderData.state.image },
+          { name: "twitter:image", content: loaderData.state.image },
         ]
       : [],
   }),
@@ -71,7 +76,11 @@ function StatePage() {
     <div className="min-h-screen">
       {/* HERO BANNER */}
       <section className="relative h-[60vh] min-h-[420px] overflow-hidden">
-        <div className="absolute inset-0" style={{ background: state.bannerGradient }} />
+        <StateCardImage
+          src={state.image}
+          alt={state.name}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         <div className="absolute inset-0 paisley-pattern opacity-30" />
 
@@ -195,15 +204,40 @@ function StatePage() {
 
 function CulturalCard({ item, kind }: { item: CulturalItem; kind: TabId }) {
   const isFestival = kind === "festivals";
+  const query =
+    kind === "festivals"
+      ? `${item.title} festival india`
+      : kind === "food"
+        ? `${item.title} food india`
+        : kind === "art"
+          ? `${item.title} art india`
+          : kind === "traditions"
+            ? `${item.title} tradition india`
+            : `${item.title} heritage india`;
+  const { imageUrl, loading } = usePexelsImage(query);
+  
   return (
     <article
       className={`group rounded-2xl overflow-hidden glass lift-on-hover ${isFestival ? "festive-border" : ""}`}
     >
       <div className="relative h-44 overflow-hidden">
-        <div
-          className="absolute inset-0 transition-transform duration-700 group-hover:scale-110"
-          style={{ background: item.image }}
-        />
+        {loading ? (
+          <Skeleton className="absolute inset-0 h-full w-full rounded-none" />
+        ) : imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={item.title}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            onLoad={() => console.log(`✓ Image loaded for: ${item.title}`)}
+            onError={() => console.warn(`✗ Failed to load image for: ${item.title}`)}
+            crossOrigin="anonymous"
+          />
+        ) : (
+          <div
+            className="absolute inset-0 transition-transform duration-700 group-hover:scale-110"
+            style={{ background: item.image }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         {item.badge && (
           <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur text-saffron-deep">

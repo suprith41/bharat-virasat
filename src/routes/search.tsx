@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { STATE_LIST, type CulturalItem } from "@/data/states";
+import usePexelsImage from "@/hooks/usePexelsImage";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/search")({
   head: () => ({
@@ -48,6 +50,61 @@ interface ResultItem extends CulturalItem {
   state: string;
   stateId: string;
   category: FilterId;
+}
+
+function getPexelsQuery(item: ResultItem) {
+  const suffix =
+    item.category === "festivals"
+      ? "festival india"
+      : item.category === "food"
+        ? "food india"
+        : item.category === "art"
+          ? "art india"
+          : item.category === "traditions"
+            ? "tradition india"
+            : "heritage india";
+
+  return `${item.title} ${suffix}`;
+}
+
+function SearchResultCard({ item, index }: { item: ResultItem; index: number }) {
+  const { imageUrl, loading } = usePexelsImage(getPexelsQuery(item));
+
+  return (
+    <Link
+      to="/state/$id"
+      params={{ id: item.stateId }}
+      className="block glass rounded-2xl overflow-hidden lift-on-hover animate-fade-up"
+    >
+      <div className="w-full relative overflow-hidden" style={{ height: 100 + ((index * 37) % 80) }}>
+        {loading ? (
+          <Skeleton className="absolute inset-0 h-full w-full rounded-none" />
+        ) : imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={item.title}
+            className="absolute inset-0 h-full w-full object-cover"
+            onLoad={() => console.log(`✓ Search image loaded for: ${item.title}`)}
+            onError={() => console.warn(`✗ Search image failed for: ${item.title}`)}
+            crossOrigin="anonymous"
+          />
+        ) : (
+          <div className="absolute inset-0" style={{ background: item.image }} />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/10 to-black/40" />
+      </div>
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[10px] uppercase tracking-wider text-saffron-deep font-bold">
+            {item.category}
+          </span>
+          <span className="text-[10px] text-muted-foreground">{item.state}</span>
+        </div>
+        <h3 className="font-display font-semibold text-base mb-1">{item.title}</h3>
+        <p className="text-xs text-foreground/70 line-clamp-3">{item.description}</p>
+      </div>
+    </Link>
+  );
 }
 
 function SearchPage() {
@@ -212,30 +269,7 @@ function SearchPage() {
               <div className="text-sm text-muted-foreground mb-4">{results.length} results</div>
               <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 [&>*]:mb-5 [&>*]:break-inside-avoid">
                 {results.map((r, i) => (
-                  <Link
-                    key={i}
-                    to="/state/$id"
-                    params={{ id: r.stateId }}
-                    className="block glass rounded-2xl overflow-hidden lift-on-hover animate-fade-up"
-                  >
-                    <div
-                      className="w-full"
-                      style={{
-                        background: r.image,
-                        height: 100 + ((i * 37) % 80),
-                      }}
-                    />
-                    <div className="p-4">
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[10px] uppercase tracking-wider text-saffron-deep font-bold">
-                          {r.category}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">{r.state}</span>
-                      </div>
-                      <h3 className="font-display font-semibold text-base mb-1">{r.title}</h3>
-                      <p className="text-xs text-foreground/70 line-clamp-3">{r.description}</p>
-                    </div>
-                  </Link>
+                  <SearchResultCard key={i} item={r} index={i} />
                 ))}
               </div>
             </>

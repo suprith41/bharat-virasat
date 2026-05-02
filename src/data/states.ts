@@ -23,7 +23,7 @@ export interface StateData {
   featured?: boolean;
   bannerGradient: string;
   thumbGradient: string;
-  cardImage?: string;
+  image: string;
   festivals: CulturalItem[];
   food: CulturalItem[];
   art: CulturalItem[];
@@ -53,7 +53,7 @@ export const STATES: Record<string, StateData> = {
     featured: true,
     bannerGradient: grad("#f4a261", "#e76f51", "#9d4e15"),
     thumbGradient: grad("#ffd9a8", "#f4a261"),
-    cardImage: "https://images.unsplash.com/photo-1477587458883-47145ed94245?w=800",
+    image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?w=800",
     festivals: [
       {
         title: "Pushkar Camel Fair",
@@ -201,7 +201,7 @@ export const STATES: Record<string, StateData> = {
     featured: true,
     bannerGradient: grad("#a7c957", "#386641", "#1a4314"),
     thumbGradient: grad("#bfd8a3", "#6a994e"),
-    cardImage: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800",
+    image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800",
     festivals: [
       {
         title: "Onam",
@@ -330,7 +330,7 @@ export const STATES: Record<string, StateData> = {
     featured: true,
     bannerGradient: grad("#d62828", "#9a031e", "#370617"),
     thumbGradient: grad("#fcd5ce", "#e76f51"),
-    cardImage: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800",
+    image: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800",
     festivals: [
       {
         title: "Pongal",
@@ -449,7 +449,7 @@ export const STATES: Record<string, StateData> = {
     iconicFestival: "Durga Puja",
     signatureDish: "Macher Jhol",
     quickFact: "The intellectual and artistic heart of eastern India.",
-    cardImage: "https://images.unsplash.com/photo-1558431382-27e303142255?w=800",
+    image: "https://images.unsplash.com/photo-1558431382-27e303142255?w=800",
     bannerGradient: grad("#e63946", "#9d0208", "#3c0a0a"),
     thumbGradient: grad("#ffccd5", "#e63946"),
     festivals: [
@@ -568,7 +568,7 @@ export const STATES: Record<string, StateData> = {
     iconicFestival: "Baisakhi",
     signatureDish: "Sarson da Saag",
     quickFact: "The agricultural heartland and birthplace of Sikhism.",
-    cardImage: "https://images.unsplash.com/photo-1712186870325-00427d06341a?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?w=800",
     bannerGradient: grad("#fcbf49", "#f77f00", "#d62828"),
     thumbGradient: grad("#ffe5b4", "#fcbf49"),
     festivals: [
@@ -692,7 +692,7 @@ export const STATES: Record<string, StateData> = {
     featured: true,
     bannerGradient: grad("#6f42c1", "#3a86ff", "#2a9d8f"),
     thumbGradient: grad("#b8c0ff", "#4361ee"),
-    cardImage: "https://images.unsplash.com/photo-1643449415972-87d4cfe882a1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1643449415972-87d4cfe882a1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     festivals: [
       {
         title: "Baisakhi",
@@ -841,7 +841,7 @@ export const STATES: Record<string, StateData> = {
     featured: true,
     bannerGradient: grad("#ff8fab", "#fb8500", "#e63946"),
     thumbGradient: grad("#ffd6a5", "#ffb703"),
-    cardImage: "https://images.unsplash.com/photo-1706790574525-d218c4c52b5c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1706790574525-d218c4c52b5c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     festivals: [
       {
         title: "Rath Yatra",
@@ -983,7 +983,7 @@ export const STATES: Record<string, StateData> = {
     featured: true,
     bannerGradient: grad("#4f8cff", "#3a86ff", "#80ed99"),
     thumbGradient: grad("#caffbf", "#52b788"),
-    cardImage: "https://images.unsplash.com/photo-1695827724182-742453f1ed59?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1695827724182-742453f1ed59?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     festivals: [
       {
         title: "Nongkrem Dance Festival",
@@ -1126,7 +1126,7 @@ export const STATES: Record<string, StateData> = {
     featured: true,
     bannerGradient: grad("#ffb703", "#fb8500", "#2a9d8f"),
     thumbGradient: grad("#ffd166", "#e9c46a"),
-    cardImage: "https://images.unsplash.com/photo-1597074866923-dc0589150358?w=800",
+    image: "https://images.unsplash.com/photo-1597074866923-dc0589150358?w=800",
     festivals: [
       {
         title: "Bihu",
@@ -1275,7 +1275,7 @@ export const STATES: Record<string, StateData> = {
     featured: true,
     bannerGradient: grad("#f4a261", "#e76f51", "#9d0208"),
     thumbGradient: grad("#ffd6a5", "#f4a261"),
-    cardImage: "https://images.unsplash.com/photo-1606298855672-3efb63017be8?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1606298855672-3efb63017be8?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     festivals: [
       {
         title: "Khajuraho Dance Festival",
@@ -1418,7 +1418,7 @@ export const STATES: Record<string, StateData> = {
     featured: true,
     bannerGradient: grad("#e76f51", "#d62828", "#6a040f"),
     thumbGradient: grad("#ffafcc", "#ff758f"),
-    cardImage: "https://images.unsplash.com/photo-1660145416818-b9a2b1a1f193?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1660145416818-b9a2b1a1f193?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     festivals: [
       {
         title: "Ganesh Chaturthi",
@@ -1561,7 +1561,7 @@ export const STATES: Record<string, StateData> = {
     featured: true,
     bannerGradient: grad("#8d99ae", "#6c757d", "#343a40"),
     thumbGradient: grad("#adb5bd", "#6c757d"),
-    cardImage: "https://images.unsplash.com/photo-1621909321963-2276c9660298?q=80&w=1517&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1621909321963-2276c9660298?q=80&w=1517&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     festivals: [
       {
         title: "Bathukamma",

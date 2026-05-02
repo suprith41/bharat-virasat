@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useRef, useState, type MouseEvent } from "react";
+import { useMemo, useRef, useState, useEffect, type MouseEvent } from "react";
 import { Search, ArrowRight } from "lucide-react";
 import indiaMap from "@svg-maps/india";
 import { ComposableMap, Geography, Geographies } from "react-simple-maps";
@@ -9,6 +9,7 @@ import { MAP_STATES } from "@/data/indiaMap";
 import { STATES, REGIONS, REGION_FILL, type Region } from "@/data/states";
 import { normalizeStateName } from "@/lib/stateRouting";
 import { StateCardImage } from "@/components/StateCardImage";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/map")({
   head: () => ({
@@ -175,7 +176,59 @@ function MapPage() {
   const [hovered, setHovered] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<{ x: number; y: number } | null>(null);
   const [query, setQuery] = useState("");
+  const [stateImages, setStateImages] = useState<Record<string, string>>({});
+  const [loadingImages, setLoadingImages] = useState(true);
   const mapShellRef = useRef<HTMLDivElement>(null);
+
+  // Preload all state images on mount
+  useEffect(() => {
+    const fetchAllImages = async () => {
+      const states = [
+        "Rajasthan",
+        "Kerala",
+        "Tamil Nadu",
+        "West Bengal",
+        "Punjab",
+        "Jammu Kashmir",
+        "Odisha",
+        "Meghalaya",
+        "Assam",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Telangana",
+      ];
+
+      try {
+        const results = await Promise.all(
+          states.map(async (state) => {
+            try {
+              const res = await fetch(
+                `https://api.pexels.com/v1/search?query=${encodeURIComponent(state + " india")}&per_page=1`,
+                {
+                  headers: {
+                    Authorization: import.meta.env.VITE_PEXELS_API_KEY,
+                  },
+                }
+              );
+              const data = await res.json();
+              return [state, data.photos[0]?.src?.large || ""];
+            } catch (err) {
+              console.error(`Failed to fetch image for ${state}:`, err);
+              return [state, ""];
+            }
+          })
+        );
+        setStateImages(Object.fromEntries(results));
+        console.log("✓ All state images preloaded");
+      } catch (err) {
+        console.error("Failed to preload state images:", err);
+      } finally {
+        setLoadingImages(false);
+      }
+    };
+
+    fetchAllImages();
+  }, []);
 
   const filtered = useMemo(() => {
     if (region === "all") return INDIA_ENTRIES;
@@ -369,18 +422,38 @@ function MapPage() {
                 <div
                   className="absolute pointer-events-none glass-strong rounded-2xl p-4 w-60 animate-scale-in z-10"
                   style={{
-                    left: Math.min(tooltip.x + 16, 600),
-                    top: Math.max(tooltip.y - 80, 8),
+                    left: isNaN(Math.min(tooltip.x + 16, 600)) ? 0 : Math.min(tooltip.x + 16, 600),
+                    top: isNaN(Math.max(tooltip.y - 80, 8)) ? 0 : Math.max(tooltip.y - 80, 8),
                   }}
                 >
-                  <div
-                    className="h-16 rounded-xl mb-3"
-                    style={{
-                      background:
-                        STATES[MAP_LOOKUP.get(normalizeStateName(hoveredState.name))?.id ?? ""]
-                          ?.bannerGradient || REGION_FILL[hoveredState.region],
-                    }}
-                  />
+                  <div className="h-16 rounded-xl mb-3 relative overflow-hidden">
+                    {loadingImages ? (
+                      <Skeleton className="h-full w-full rounded-none" />
+                    ) : stateImages[hoveredState.name] ? (
+                      <>
+                        <img
+                          src={stateImages[hoveredState.name]}
+                          alt={hoveredState.name}
+                          className="absolute inset-0 h-full w-full object-cover"
+                          onLoad={() => console.log(`Tooltip image loaded: ${hoveredState.name}`)}
+                          onError={() =>
+                            console.warn(`Tooltip image failed to load: ${hoveredState.name}`)
+                          }
+                          crossOrigin="anonymous"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
+                      </>
+                    ) : (
+                      <StateCardImage
+                        src={
+                          STATES[MAP_LOOKUP.get(normalizeStateName(hoveredState.name))?.id ?? ""]
+                            ?.image
+                        }
+                        alt={hoveredState.name}
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    )}
+                  </div>
                   <div className="font-display font-bold text-base mb-1">{hoveredState.name}</div>
                   {detailedHover ? (
                     <div className="space-y-1.5 text-xs text-foreground/70">
@@ -427,8 +500,9 @@ function MapPage() {
                   <div
                     className="h-28 rounded-xl mb-4 relative overflow-hidden"
                     style={{
-                      background:
-                        STATES[hoveredState.id]?.bannerGradient || REGION_FILL[hoveredState.region],
+                      backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.42)), url(${STATES[hoveredState.id]?.image ?? ""})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
                     }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
@@ -478,7 +552,7 @@ function MapPage() {
                         className="rounded-xl h-16 relative overflow-hidden lift-on-hover"
                       >
                         <StateCardImage
-                          src={stateInfo.cardImage}
+                          src={stateInfo.image}
                           alt={stateInfo.name}
                           className="absolute inset-0 h-full w-full object-cover"
                         />
