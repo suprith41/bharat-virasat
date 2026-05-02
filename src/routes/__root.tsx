@@ -1,24 +1,23 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 mandala-bg">
+      <div className="max-w-md text-center glass-strong rounded-3xl p-10">
+        <h1 className="font-display text-7xl font-bold text-shimmer">404</h1>
+        <h2 className="mt-4 font-display text-2xl text-foreground">Lost in the bazaar</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          This page wandered off into the alleys. Let's get you home.
         </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
+        <Link
+          to="/"
+          className="mt-6 inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold text-white saffron-gradient shadow-[var(--shadow-glow-saffron)]"
+        >
+          Return home
+        </Link>
       </div>
     </div>
   );
@@ -29,20 +28,19 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Bharat Virasat — Discover the Soul of India" },
+      { name: "description", content: "A digital cultural museum of India: 28 states, thousands of festivals, art forms and traditions in one immersive archive." },
+      { name: "author", content: "Bharat Virasat" },
+      { property: "og:title", content: "Bharat Virasat — Discover the Soul of India" },
+      { property: "og:description", content: "Explore India's living heritage through an interactive map of states, festivals, food and art." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -65,5 +63,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const isAdmin = path.startsWith("/admin");
+  const isAuth = path === "/login" || path === "/register";
+  return (
+    <div className={isAdmin ? "dark min-h-screen bg-background" : "min-h-screen bg-background"}>
+      {!isAdmin && !isAuth && <Navbar />}
+      <main className={!isAdmin && !isAuth ? "pt-0" : ""}>
+        <Outlet />
+      </main>
+      {!isAdmin && !isAuth && <Footer />}
+    </div>
+  );
 }
