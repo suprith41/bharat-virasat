@@ -196,6 +196,10 @@
   * {
     border-color: var(--color-border);
   }
+  .custom-cursor-enabled[data-cursor-enabled="true"],
+  .custom-cursor-enabled[data-cursor-enabled="true"] * {
+    cursor: none !important;
+  }
   html {
     scroll-behavior: smooth;
   }
@@ -208,6 +212,161 @@
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     letter-spacing: -0.01em;
+  }
+
+  #cursor-dot {
+    width: 6px;
+    height: 6px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 100001;
+    will-change: transform, opacity;
+    transition:
+      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 0.2s ease,
+      filter 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    opacity: 0;
+  }
+
+  #cursor-dot .cursor-dot-visual {
+    width: 100%;
+    height: 100%;
+    background: #ff6b35;
+    border-radius: 9999px;
+    box-shadow: 0 0 6px 2px rgb(255 107 53 / 0.8);
+    animation: cursorPulse 2.2s ease-in-out infinite;
+    transition:
+      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+      background-color 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+      box-shadow 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  #cursor-ring {
+    width: 28px;
+    height: 28px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 100000;
+    will-change: transform, opacity;
+    transition:
+      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 0.2s ease,
+      filter 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    opacity: 0;
+  }
+
+  #cursor-ring .cursor-ring-visual {
+    width: 100%;
+    height: 100%;
+    border: 1.5px dashed #ff6b35;
+    border-radius: 9999px;
+    opacity: 0.85;
+    animation: rotateCursor 3s linear infinite;
+    transition:
+      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 0.2s ease,
+      border-color 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+      box-shadow 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+      background-color 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+      border-style 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  #cursor-aura {
+    width: 55px;
+    height: 55px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-radius: 9999px;
+    pointer-events: none;
+    z-index: 99999;
+    mix-blend-mode: normal;
+    will-change: transform, opacity;
+    transition:
+      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 0.2s ease,
+      filter 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    opacity: 0;
+  }
+
+  #cursor-aura .cursor-aura-visual {
+    width: 100%;
+    height: 100%;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgb(255 107 53 / 0.15) 0%, transparent 70%);
+    transition:
+      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 0.2s ease,
+      filter 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  #cursor-dot[data-visible="true"],
+  #cursor-ring[data-visible="true"] {
+    opacity: 1;
+  }
+
+  #cursor-aura[data-visible="true"] {
+    opacity: 1;
+  }
+
+  #cursor-dot[data-interactive="true"] .cursor-dot-visual {
+    background: white;
+    transform: scale(2);
+  }
+
+  #cursor-ring[data-interactive="true"] .cursor-ring-visual {
+    transform: scale(2.5);
+    border-style: solid;
+    box-shadow: 0 0 12px rgb(255 107 53 / 0.9);
+  }
+
+  #cursor-aura[data-interactive="true"] .cursor-aura-visual {
+    transform: scale(1.5);
+    filter: brightness(1.2);
+  }
+
+  #cursor-dot[data-clicking="true"] .cursor-dot-visual {
+    transform: scale(2.6);
+  }
+
+  #cursor-ring[data-clicking="true"] .cursor-ring-visual {
+    border-color: #ff6b35;
+    box-shadow: 0 0 16px rgb(255 107 53 / 0.95);
+  }
+
+  @keyframes rotateCursor {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes cursorPulse {
+    0%, 100% {
+      box-shadow: 0 0 6px 2px rgb(255 107 53 / 0.8);
+    }
+    50% {
+      box-shadow: 0 0 12px 5px rgb(255 107 53 / 0.4);
+    }
+  }
+
+  @media (hover: none) {
+    #cursor-dot,
+    #cursor-ring,
+    #cursor-aura {
+      display: none;
+    }
+
+    .custom-cursor-enabled[data-cursor-enabled="true"],
+    .custom-cursor-enabled[data-cursor-enabled="true"] * {
+      cursor: auto !important;
+    }
   }
 }
 

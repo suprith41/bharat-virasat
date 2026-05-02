@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useRef, useState, useEffect, type MouseEvent } from "react";
-import { Search, ArrowRight } from "lucide-react";
+import { useMemo, useRef, useState, useEffect } from "react";
+import { Search } from "lucide-react";
 import indiaMap from "@svg-maps/india";
 import { ComposableMap, Geography, Geographies } from "react-simple-maps";
 import { geoIdentity } from "d3-geo";
@@ -9,7 +9,7 @@ import { MAP_STATES } from "@/data/indiaMap";
 import { STATES, REGIONS, REGION_FILL, type Region } from "@/data/states";
 import { normalizeStateName } from "@/lib/stateRouting";
 import { StateCardImage } from "@/components/StateCardImage";
-import { Skeleton } from "@/components/ui/skeleton";
+import { mapImages } from "@/data/mapImages";
 
 export const Route = createFileRoute("/map")({
   head: () => ({
@@ -173,62 +173,9 @@ const INDIA_FEATURE_COLLECTION = {
 function MapPage() {
   const navigate = useNavigate();
   const [region, setRegion] = useState<Region | "all">("all");
-  const [hovered, setHovered] = useState<string | null>(null);
-  const [tooltip, setTooltip] = useState<{ x: number; y: number } | null>(null);
   const [query, setQuery] = useState("");
-  const [stateImages, setStateImages] = useState<Record<string, string>>({});
-  const [loadingImages, setLoadingImages] = useState(true);
+  const [hoveredStateId, setHoveredStateId] = useState<string | null>(null);
   const mapShellRef = useRef<HTMLDivElement>(null);
-
-  // Preload all state images on mount
-  useEffect(() => {
-    const fetchAllImages = async () => {
-      const states = [
-        "Rajasthan",
-        "Kerala",
-        "Tamil Nadu",
-        "West Bengal",
-        "Punjab",
-        "Jammu Kashmir",
-        "Odisha",
-        "Meghalaya",
-        "Assam",
-        "Madhya Pradesh",
-        "Maharashtra",
-        "Telangana",
-      ];
-
-      try {
-        const results = await Promise.all(
-          states.map(async (state) => {
-            try {
-              const res = await fetch(
-                `https://api.pexels.com/v1/search?query=${encodeURIComponent(state + " india")}&per_page=1`,
-                {
-                  headers: {
-                    Authorization: import.meta.env.VITE_PEXELS_API_KEY,
-                  },
-                }
-              );
-              const data = await res.json();
-              return [state, data.photos[0]?.src?.large || ""];
-            } catch (err) {
-              console.error(`Failed to fetch image for ${state}:`, err);
-              return [state, ""];
-            }
-          })
-        );
-        setStateImages(Object.fromEntries(results));
-        console.log("✓ All state images preloaded");
-      } catch (err) {
-        console.error("Failed to preload state images:", err);
-      } finally {
-        setLoadingImages(false);
-      }
-    };
-
-    fetchAllImages();
-  }, []);
 
   const filtered = useMemo(() => {
     if (region === "all") return INDIA_ENTRIES;
@@ -242,22 +189,8 @@ function MapPage() {
     return INDIA_ENTRIES.filter((s) => s.name.toLowerCase().includes(q)).slice(0, 6);
   }, [query]);
 
-  const hoveredState = hovered ? INDIA_ENTRIES.find((s) => s.id === hovered) : null;
-  const detailedHover = hoveredState
-    ? STATES[MAP_LOOKUP.get(normalizeStateName(hoveredState.name))?.id ?? ""]
-    : null;
-
   const goToState = (stateName: string) => {
     navigate({ to: "/state/$id", params: { id: stateName } });
-  };
-
-  const updateTooltipFromEvent = (event: MouseEvent<SVGPathElement>) => {
-    const shellRect = mapShellRef.current?.getBoundingClientRect();
-    if (!shellRect) return;
-    setTooltip({
-      x: event.clientX - shellRect.left,
-      y: event.clientY - shellRect.top,
-    });
   };
 
   return (
@@ -269,10 +202,10 @@ function MapPage() {
             The Map
           </div>
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-3">
-            <span className="text-shimmer">Hover. Click. Discover.</span>
+            <span className="text-shimmer">Click. Discover.</span>
           </h1>
           <p className="text-foreground/70 max-w-xl mx-auto">
-            Every state is a doorway. Brush over one to peek inside, click to step through.
+            Every state is a doorway. Click to step through.
           </p>
         </div>
 
@@ -337,140 +270,108 @@ function MapPage() {
                 className="w-full h-auto"
               >
                 <defs>
-                  <filter id="lift" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow
-                      dx="0"
-                      dy="6"
-                      stdDeviation="6"
-                      floodColor="oklch(0.4 0.15 40)"
-                      floodOpacity="0.25"
-                    />
-                  </filter>
+                  {/* Create clipPath for each state */}
+                  {INDIA_ENTRIES.map((entry) => (
+                    <clipPath key={`clip-${entry.id}`} id={`clip-${entry.id}`}>
+                      <path d={entry.path} />
+                    </clipPath>
+                  ))}
                 </defs>
 
+                {/* Render images with clipPath and semi-transparent overlays */}
+                <g>
+                  {INDIA_ENTRIES.map((entry) => {
+                    const isVisible = dimmed.has(entry.id);
+                    const imageSrc = mapImages[entry.name];
+                    const regionColor = REGION_FILL[entry.region] ?? "#E8D5C4";
+                    
+                    return (
+                      <g key={`image-${entry.id}`} opacity={isVisible ? 1 : 0.3}>
+                        {/* Image with clipPath */}
+                        {imageSrc && (
+                          <image
+                            href={imageSrc}
+                            x="0"
+                            y="0"
+                            width="612"
+                            height="696"
+                            preserveAspectRatio="none"
+                            style={{ clipPath: `url(#clip-${entry.id})` } as any}
+                          />
+                        )}
+                        
+                        {/* Semi-transparent color overlay */}
+                        <path
+                          d={entry.path}
+                          fill={regionColor}
+                          opacity="0.4"
+                          style={{ clipPath: `url(#clip-${entry.id})` } as any}
+                        />
+                      </g>
+                    );
+                  })}
+                </g>
+
+                {/* Geographies for interactivity (transparent, click-through) */}
                 <Geographies geography={INDIA_FEATURE_COLLECTION}>
                   {({ geographies }) =>
                     geographies.map((geo) => {
                       const entry = geo.properties as IndiaFeature["properties"];
-                      const isVisible = dimmed.has(entry.id);
-                      const isHover = hovered === entry.id;
-                      const fill = REGION_FILL[entry.region] ?? REGION_FILL.central;
 
                       return (
                         <Geography
                           key={geo.rsmKey}
                           geography={geo}
-                          onMouseEnter={(event) => {
-                            setHovered(entry.id);
-                            updateTooltipFromEvent(event);
-                          }}
-                          onMouseMove={(event) => {
-                            updateTooltipFromEvent(event);
-                          }}
-                          onMouseLeave={() => {
-                            setHovered(null);
-                            setTooltip(null);
-                          }}
+                          data-cursor-interactive="true"
+                          onMouseEnter={() => setHoveredStateId(entry.id)}
+                          onMouseLeave={() => setHoveredStateId(null)}
                           onClick={() => goToState(entry.name)}
-                          onFocus={(event) => {
-                            setHovered(entry.id);
-                            updateTooltipFromEvent(event as unknown as MouseEvent<SVGPathElement>);
-                          }}
                           style={{
                             default: {
-                              fill,
+                              fill: "transparent",
                               stroke: "white",
-                              strokeWidth: 1.6,
+                              strokeWidth: 1.5,
                               outline: "none",
-                              opacity: isVisible ? 1 : 0.3,
                               cursor: "pointer",
                               transition: "all 180ms ease",
-                              transformBox: "fill-box",
-                              transformOrigin: "center",
                             },
                             hover: {
-                              fill,
+                              fill: "transparent",
                               stroke: "white",
-                              strokeWidth: 1.8,
+                              strokeWidth: 2,
                               outline: "none",
-                              opacity: 1,
                               cursor: "pointer",
-                              filter: "brightness(1.08) saturate(1.05)",
-                              transform: "translateY(-2px) scale(1.015)",
-                              transformBox: "fill-box",
-                              transformOrigin: "center",
+                              filter: "drop-shadow(0 0 4px rgba(194, 146, 35, 0.3))",
                             },
                             pressed: {
-                              fill,
+                              fill: "transparent",
                               stroke: "white",
-                              strokeWidth: 1.8,
+                              strokeWidth: 2,
                               outline: "none",
-                              opacity: 1,
                               cursor: "pointer",
                             },
                           }}
-                          className={isHover ? "shadow-[0_8px_24px_-10px_rgba(0,0,0,0.45)]" : ""}
                         />
                       );
                     })
                   }
                 </Geographies>
-              </ComposableMap>
 
-              {/* Tooltip */}
-              {hoveredState && tooltip && (
-                <div
-                  className="absolute pointer-events-none glass-strong rounded-2xl p-4 w-60 animate-scale-in z-10"
-                  style={{
-                    left: isNaN(Math.min(tooltip.x + 16, 600)) ? 0 : Math.min(tooltip.x + 16, 600),
-                    top: isNaN(Math.max(tooltip.y - 80, 8)) ? 0 : Math.max(tooltip.y - 80, 8),
-                  }}
-                >
-                  <div className="h-16 rounded-xl mb-3 relative overflow-hidden">
-                    {loadingImages ? (
-                      <Skeleton className="h-full w-full rounded-none" />
-                    ) : stateImages[hoveredState.name] ? (
-                      <>
-                        <img
-                          src={stateImages[hoveredState.name]}
-                          alt={hoveredState.name}
-                          className="absolute inset-0 h-full w-full object-cover"
-                          onLoad={() => console.log(`Tooltip image loaded: ${hoveredState.name}`)}
-                          onError={() =>
-                            console.warn(`Tooltip image failed to load: ${hoveredState.name}`)
-                          }
-                          crossOrigin="anonymous"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
-                      </>
-                    ) : (
-                      <StateCardImage
-                        src={
-                          STATES[MAP_LOOKUP.get(normalizeStateName(hoveredState.name))?.id ?? ""]
-                            ?.image
-                        }
-                        alt={hoveredState.name}
-                        className="absolute inset-0 h-full w-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <div className="font-display font-bold text-base mb-1">{hoveredState.name}</div>
-                  {detailedHover ? (
-                    <div className="space-y-1.5 text-xs text-foreground/70">
-                      <div>
-                        <span className="font-semibold text-saffron-deep">Festival:</span>{" "}
-                        {detailedHover.iconicFestival}
-                      </div>
-                      <div>
-                        <span className="font-semibold text-saffron-deep">Dish:</span>{" "}
-                        {detailedHover.signatureDish}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-xs text-muted-foreground">Profile coming soon</div>
-                  )}
-                </div>
-              )}
+                {/* Hover label */}
+                {hoveredStateId && (
+                  <text
+                    x="306"
+                    y="680"
+                    textAnchor="middle"
+                    fill="white"
+                    fontSize="12"
+                    fontWeight="600"
+                    pointerEvents="none"
+                  >
+                    {INDIA_ENTRIES.find((e) => e.id === hoveredStateId)?.name}
+                  </text>
+                )}
+              </ComposableMap>
 
               {/* Legend */}
               <div className="mt-4 flex flex-wrap gap-3 text-[11px] text-muted-foreground">
@@ -489,53 +390,20 @@ function MapPage() {
             </div>
           </div>
 
-          {/* Right: currently exploring */}
+          {/* Right: click guidance */}
           <aside className="lg:col-span-3 order-3">
             <div className="glass-strong rounded-2xl p-5 sticky top-24">
               <div className="text-[10px] uppercase tracking-[0.2em] text-saffron-deep font-semibold mb-3">
-                Currently Exploring
+                Click To Explore
               </div>
-              {hoveredState ? (
-                <div className="animate-fade-in">
-                  <div
-                    className="h-28 rounded-xl mb-4 relative overflow-hidden"
-                    style={{
-                      backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.42)), url(${STATES[hoveredState.id]?.image ?? ""})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                    <div className="absolute bottom-2 left-3 text-white">
-                      <div className="text-[10px] uppercase tracking-wider opacity-80">
-                        {hoveredState.region}
-                      </div>
-                      <div className="font-display text-lg font-bold">{hoveredState.name}</div>
-                    </div>
-                  </div>
-                  {detailedHover ? (
-                    <>
-                      <p className="text-sm text-foreground/75 leading-relaxed mb-4">
-                        {detailedHover.quickFact}
-                      </p>
-                      <button
-                        onClick={() => goToState(hoveredState.id)}
-                        className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold text-white saffron-gradient hover:scale-[1.02] transition-transform"
-                      >
-                        Deep Dive <ArrowRight className="h-4 w-4" />
-                      </button>
-                    </>
-                  ) : (
-                    <p className="text-sm text-muted-foreground italic">
-                      Detailed profile is being curated for this state.
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="py-8 text-center text-sm text-muted-foreground">
-                  Hover any state to begin
-                </div>
-              )}
+              <p className="text-sm text-foreground/75 leading-relaxed">
+                Every Indian state displays its iconic landmark architecture from Pexels. Click any
+                state to open its cultural page and discover festivals, food, art, and heritage.
+              </p>
+              <div className="mt-4 space-y-2 text-xs text-foreground/70">
+                <div>Images are clipped to state boundaries.</div>
+                <div>Colors overlay the images to maintain the pastel theme.</div>
+              </div>
 
               <div className="mt-6 pt-5 border-t border-border/60">
                 <div className="text-[10px] uppercase tracking-[0.2em] text-saffron-deep font-semibold mb-3">

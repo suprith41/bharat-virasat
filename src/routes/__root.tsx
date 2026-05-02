@@ -7,6 +7,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
+import { CustomCursor } from "@/components/CustomCursor";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -83,9 +84,18 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const isAdmin = path.startsWith("/admin");
-  const isAuth = path === "/login" || path === "/register";
+  const isLogin = path === "/login";
+  const isAuth = isLogin || path === "/register";
   return (
-    <div className={isAdmin ? "dark min-h-screen bg-background" : "min-h-screen bg-background"}>
+    <div
+      className={
+        isAdmin
+          ? "dark min-h-screen bg-background custom-cursor-enabled"
+          : "min-h-screen bg-background custom-cursor-enabled"
+      }
+      data-cursor-enabled={!isLogin}
+    >
+      {!isLogin && <CustomCursor />}
       {!isAdmin && !isAuth && <Navbar />}
       <main className={!isAdmin && !isAuth ? "pt-0" : ""}>
         <Outlet />
