@@ -1,8 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState, type MouseEvent } from "react";
 import { Search, ArrowRight } from "lucide-react";
+import indiaMap from "@svg-maps/india";
+import { ComposableMap, Geography, Geographies } from "react-simple-maps";
+import { geoIdentity } from "d3-geo";
+import parseSvgPath from "svg-path-parser";
 import { MAP_STATES } from "@/data/indiaMap";
 import { STATES, REGIONS, REGION_FILL, type Region } from "@/data/states";
+import { normalizeStateName } from "@/lib/stateRouting";
 
 export const Route = createFileRoute("/map")({
   head: () => ({
@@ -18,7 +23,150 @@ export const Route = createFileRoute("/map")({
   component: MapPage,
 });
 
-const FEATURED_PULSE = new Set(["RJ", "KL", "TN", "WB"]);
+type MapEntry = {
+  id: string;
+  name: string;
+  path: string;
+  region: Region;
+  hasDetail: boolean;
+  featured: boolean;
+};
+
+type IndiaFeature = {
+  type: "Feature";
+  properties: {
+    id: string;
+    name: string;
+    region: Region;
+    hasDetail: boolean;
+    featured: boolean;
+  };
+  geometry: {
+    type: "Polygon" | "MultiPolygon";
+    coordinates: number[][][][] | number[][][];
+  };
+};
+
+const MAP_LOOKUP = new Map(MAP_STATES.map((state) => [normalizeStateName(state.name), state] as const));
+
+function parseSvgPathToRings(path: string) {
+  const rings: [number, number][][] = [];
+  let x = 0;
+  let y = 0;
+  let startX = 0;
+  let startY = 0;
+  let ring: [number, number][] | null = null;
+
+  const closeRing = () => {
+    if (ring && ring.length > 2) {
+      const [firstX, firstY] = ring[0];
+      const [lastX, lastY] = ring[ring.length - 1];
+      if (firstX !== lastX || firstY !== lastY) {
+        ring.push([firstX, firstY]);
+      }
+      rings.push(ring);
+    }
+    ring = null;
+  };
+
+  const commands = parseSvgPath(path) as Array<
+    | { code: "M"; x: number; y: number }
+    | { code: "m"; x: number; y: number }
+    | { code: "L"; x: number; y: number }
+    | { code: "l"; x: number; y: number }
+    | { code: "Z" }
+    | { code: "z" }
+  >;
+
+  for (const command of commands) {
+    switch (command.code) {
+      case "M":
+        closeRing();
+        x = command.x;
+        y = command.y;
+        startX = x;
+        startY = y;
+        ring = [[x, y]];
+        break;
+      case "m":
+        closeRing();
+        x += command.x;
+        y += command.y;
+        startX = x;
+        startY = y;
+        ring = [[x, y]];
+        break;
+      case "L":
+        x = command.x;
+        y = command.y;
+        ring?.push([x, y]);
+        break;
+      case "l":
+        x += command.x;
+        y += command.y;
+        ring?.push([x, y]);
+        break;
+      case "Z":
+      case "z":
+        if (ring) {
+          ring.push([startX, startY]);
+        }
+        closeRing();
+        x = startX;
+        y = startY;
+        break;
+    }
+  }
+
+  closeRing();
+  return rings;
+}
+
+function pathToGeometry(path: string) {
+  const rings = parseSvgPathToRings(path);
+  if (rings.length <= 1) {
+    return {
+      type: "Polygon" as const,
+      coordinates: [rings[0] ?? []],
+    };
+  }
+
+  return {
+    type: "MultiPolygon" as const,
+    coordinates: rings.map((ring) => [ring]),
+  };
+}
+
+const INDIA_ENTRIES: MapEntry[] = indiaMap.locations.map((location) => {
+  const matched = MAP_LOOKUP.get(normalizeStateName(location.name));
+  const detailedState = STATES[matched?.id ?? ""];
+  if (!matched) {
+    return null;
+  }
+  return {
+    id: location.id,
+    name: location.name,
+    path: location.path,
+    region: matched?.region ?? "central",
+    hasDetail: Boolean(detailedState),
+    featured: Boolean(detailedState?.featured),
+  };
+}).filter(Boolean) as MapEntry[];
+
+const INDIA_FEATURE_COLLECTION = {
+  type: "FeatureCollection" as const,
+  features: INDIA_ENTRIES.map((entry) => ({
+    type: "Feature" as const,
+    properties: {
+      id: entry.id,
+      name: entry.name,
+      region: entry.region,
+      hasDetail: entry.hasDetail,
+      featured: entry.featured,
+    },
+    geometry: pathToGeometry(entry.path),
+  })) as IndiaFeature[],
+};
 
 function MapPage() {
   const navigate = useNavigate();
@@ -26,24 +174,36 @@ function MapPage() {
   const [hovered, setHovered] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<{ x: number; y: number } | null>(null);
   const [query, setQuery] = useState("");
+  const mapShellRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(() => {
-    if (region === "all") return MAP_STATES;
-    return MAP_STATES.filter((s) => s.region === region);
+    if (region === "all") return INDIA_ENTRIES;
+    return INDIA_ENTRIES.filter((s) => s.region === region);
   }, [region]);
   const dimmed = useMemo(() => new Set(filtered.map((s) => s.id)), [filtered]);
 
   const suggestions = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.toLowerCase();
-    return MAP_STATES.filter((s) => s.name.toLowerCase().includes(q)).slice(0, 6);
+    return INDIA_ENTRIES.filter((s) => s.name.toLowerCase().includes(q)).slice(0, 6);
   }, [query]);
 
-  const hoveredState = hovered ? MAP_STATES.find((s) => s.id === hovered) : null;
-  const detailedHover = hoveredState && STATES[hoveredState.id];
+  const hoveredState = hovered ? INDIA_ENTRIES.find((s) => s.id === hovered) : null;
+  const detailedHover = hoveredState
+    ? STATES[MAP_LOOKUP.get(normalizeStateName(hoveredState.name))?.id ?? ""]
+    : null;
 
-  const goToState = (id: string) => {
-    if (STATES[id]) navigate({ to: "/state/$id", params: { id } });
+  const goToState = (stateName: string) => {
+    navigate({ to: "/state/$id", params: { id: stateName } });
+  };
+
+  const updateTooltipFromEvent = (event: MouseEvent<SVGPathElement>) => {
+    const shellRect = mapShellRef.current?.getBoundingClientRect();
+    if (!shellRect) return;
+    setTooltip({
+      x: event.clientX - shellRect.left,
+      y: event.clientY - shellRect.top,
+    });
   };
 
   return (
@@ -77,7 +237,7 @@ function MapPage() {
               {suggestions.map((s) => (
                 <button
                   key={s.id}
-                  onClick={() => goToState(s.id)}
+                  onClick={() => goToState(s.name)}
                   className="w-full flex items-center justify-between px-5 py-3 text-left text-sm hover:bg-saffron/10 transition-colors"
                 >
                   <span className="font-medium">{s.name}</span>
@@ -115,99 +275,93 @@ function MapPage() {
 
           {/* Map */}
           <div className="lg:col-span-7 order-1 lg:order-2">
-            <div className="glass-strong rounded-3xl p-4 md:p-6 relative overflow-hidden">
-              <svg
-                viewBox="0 0 700 800"
+            <div ref={mapShellRef} className="glass-strong rounded-3xl p-4 md:p-6 relative overflow-hidden">
+              <ComposableMap
+                width={612}
+                height={696}
+                projection={geoIdentity()}
                 className="w-full h-auto"
-                onMouseLeave={() => {
-                  setHovered(null);
-                  setTooltip(null);
-                }}
               >
                 <defs>
-                  <linearGradient id="hover-grad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="oklch(0.82 0.16 70)" />
-                    <stop offset="100%" stopColor="oklch(0.65 0.2 35)" />
-                  </linearGradient>
                   <filter id="lift" x="-20%" y="-20%" width="140%" height="140%">
                     <feDropShadow
                       dx="0"
                       dy="6"
                       stdDeviation="6"
                       floodColor="oklch(0.4 0.15 40)"
-                      floodOpacity="0.45"
+                      floodOpacity="0.25"
                     />
                   </filter>
                 </defs>
 
-                {MAP_STATES.map((s) => {
-                  const isVisible = dimmed.has(s.id);
-                  const isHover = hovered === s.id;
-                  const isFeatured = FEATURED_PULSE.has(s.id);
-                  return (
-                    <g
-                      key={s.id}
-                      onMouseEnter={(e) => {
-                        setHovered(s.id);
-                        const svg = e.currentTarget.ownerSVGElement as SVGSVGElement;
-                        const rect = svg.getBoundingClientRect();
-                        const pt = svg.createSVGPoint();
-                        pt.x = s.cx;
-                        pt.y = s.cy;
-                        const ctm = svg.getScreenCTM();
-                        if (ctm) {
-                          const screen = pt.matrixTransform(ctm);
-                          setTooltip({ x: screen.x - rect.left, y: screen.y - rect.top });
-                        }
-                      }}
-                      onClick={() => goToState(s.id)}
-                      className="cursor-pointer"
-                      style={{
-                        filter: isHover ? "url(#lift)" : undefined,
-                        transition: "filter 0.25s",
-                      }}
-                    >
-                      <path
-                        d={s.d}
-                        fill={
-                          isHover
-                            ? "url(#hover-grad)"
-                            : isVisible
-                              ? REGION_FILL[s.region]
-                              : "oklch(0.95 0.005 80)"
-                        }
-                        stroke="white"
-                        strokeWidth="2"
-                        strokeLinejoin="round"
-                        opacity={isVisible ? 1 : 0.35}
-                        style={{
-                          transition: "fill 0.3s, opacity 0.3s, transform 0.25s",
-                          transformOrigin: `${s.cx}px ${s.cy}px`,
-                          transform: isHover ? "translateY(-3px) scale(1.02)" : "none",
-                          animation:
-                            isFeatured && isVisible && !isHover
-                              ? "pulse-glow 2.5s ease-in-out infinite"
-                              : undefined,
-                        }}
-                      />
-                      <text
-                        x={s.cx}
-                        y={s.cy}
-                        textAnchor="middle"
-                        className="pointer-events-none select-none"
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 600,
-                          fill: isHover ? "white" : "oklch(0.3 0.05 40)",
-                          transition: "fill 0.25s",
-                        }}
-                      >
-                        {s.id}
-                      </text>
-                    </g>
-                  );
-                })}
-              </svg>
+                <Geographies geography={INDIA_FEATURE_COLLECTION}>
+                  {({ geographies }) =>
+                    geographies.map((geo) => {
+                      const entry = geo.properties as IndiaFeature["properties"];
+                      const isVisible = dimmed.has(entry.id);
+                      const isHover = hovered === entry.id;
+                      const fill = REGION_FILL[entry.region] ?? REGION_FILL.central;
+
+                      return (
+                        <Geography
+                          key={geo.rsmKey}
+                          geography={geo}
+                          onMouseEnter={(event) => {
+                            setHovered(entry.id);
+                            updateTooltipFromEvent(event);
+                          }}
+                          onMouseMove={(event) => {
+                            updateTooltipFromEvent(event);
+                          }}
+                          onMouseLeave={() => {
+                            setHovered(null);
+                            setTooltip(null);
+                          }}
+                          onClick={() => goToState(entry.name)}
+                          onFocus={(event) => {
+                            setHovered(entry.id);
+                            updateTooltipFromEvent(event as unknown as MouseEvent<SVGPathElement>);
+                          }}
+                          style={{
+                            default: {
+                              fill,
+                              stroke: "white",
+                              strokeWidth: 1.6,
+                              outline: "none",
+                              opacity: isVisible ? 1 : 0.3,
+                              cursor: "pointer",
+                              transition: "all 180ms ease",
+                              transformBox: "fill-box",
+                              transformOrigin: "center",
+                            },
+                            hover: {
+                              fill,
+                              stroke: "white",
+                              strokeWidth: 1.8,
+                              outline: "none",
+                              opacity: 1,
+                              cursor: "pointer",
+                              filter: "brightness(1.08) saturate(1.05)",
+                              transform: "translateY(-2px) scale(1.015)",
+                              transformBox: "fill-box",
+                              transformOrigin: "center",
+                            },
+                            pressed: {
+                              fill,
+                              stroke: "white",
+                              strokeWidth: 1.8,
+                              outline: "none",
+                              opacity: 1,
+                              cursor: "pointer",
+                            },
+                          }}
+                          className={isHover ? "shadow-[0_8px_24px_-10px_rgba(0,0,0,0.45)]" : ""}
+                        />
+                      );
+                    })
+                  }
+                </Geographies>
+              </ComposableMap>
 
               {/* Tooltip */}
               {hoveredState && tooltip && (
@@ -222,7 +376,8 @@ function MapPage() {
                     className="h-16 rounded-xl mb-3"
                     style={{
                       background:
-                        STATES[hoveredState.id]?.bannerGradient || REGION_FILL[hoveredState.region],
+                        STATES[MAP_LOOKUP.get(normalizeStateName(hoveredState.name))?.id ?? ""]
+                          ?.bannerGradient || REGION_FILL[hoveredState.region],
                     }}
                   />
                   <div className="font-display font-bold text-base mb-1">{hoveredState.name}</div>
@@ -312,19 +467,19 @@ function MapPage() {
                   Featured
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  {Array.from(FEATURED_PULSE).map((id) => {
-                    const s = STATES[id];
-                    if (!s) return null;
+                  {INDIA_ENTRIES.filter((entry) => entry.featured).map((entry) => {
+                    const stateInfo = STATES[MAP_LOOKUP.get(normalizeStateName(entry.name))?.id ?? ""];
+                    if (!stateInfo) return null;
                     return (
                       <button
-                        key={id}
-                        onClick={() => goToState(id)}
+                          key={entry.id}
+                          onClick={() => goToState(entry.name)}
                         className="rounded-xl h-16 relative overflow-hidden lift-on-hover"
-                        style={{ background: s.bannerGradient }}
+                          style={{ background: stateInfo.bannerGradient }}
                       >
                         <div className="absolute inset-0 bg-black/30" />
                         <span className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
-                          {s.name}
+                            {stateInfo.name}
                         </span>
                       </button>
                     );

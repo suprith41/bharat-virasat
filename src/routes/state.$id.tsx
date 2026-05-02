@@ -2,10 +2,11 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ChevronRight, MapPin, Languages, Star, Landmark, Sparkles } from "lucide-react";
 import { STATES, type CulturalItem } from "@/data/states";
+import { resolveStateFromParam } from "@/lib/stateRouting";
 
 export const Route = createFileRoute("/state/$id")({
   loader: ({ params }) => {
-    const state = STATES[params.id];
+    const state = resolveStateFromParam(params.id);
     if (!state) throw notFound();
     return { state };
   },
