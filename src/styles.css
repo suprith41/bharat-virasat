@@ -233,9 +233,9 @@
   #cursor-dot .cursor-dot-visual {
     width: 100%;
     height: 100%;
-    background: #ff6b35;
+    background: #f5f0e8;
     border-radius: 9999px;
-    box-shadow: 0 0 6px 2px rgb(255 107 53 / 0.8);
+    box-shadow: 0 0 6px 2px rgb(245 240 232 / 0.8);
     animation: cursorPulse 2.2s ease-in-out infinite;
     transition:
       transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
@@ -262,7 +262,7 @@
   #cursor-ring .cursor-ring-visual {
     width: 100%;
     height: 100%;
-    border: 1.5px dashed #ff6b35;
+    border: 1.5px dashed #000000;
     border-radius: 9999px;
     opacity: 0.85;
     animation: rotateCursor 3s linear infinite;
@@ -297,7 +297,7 @@
     width: 100%;
     height: 100%;
     border-radius: 9999px;
-    background: radial-gradient(circle, rgb(255 107 53 / 0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgb(0 0 0 / 0.12) 0%, transparent 70%);
     transition:
       transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
       opacity 0.2s ease,
@@ -314,14 +314,15 @@
   }
 
   #cursor-dot[data-interactive="true"] .cursor-dot-visual {
-    background: white;
+    background: #000000;
     transform: scale(2);
   }
 
   #cursor-ring[data-interactive="true"] .cursor-ring-visual {
     transform: scale(2.5);
     border-style: solid;
-    box-shadow: 0 0 12px rgb(255 107 53 / 0.9);
+    border-color: #000000;
+    box-shadow: 0 0 12px rgb(0 0 0 / 0.6);
   }
 
   #cursor-aura[data-interactive="true"] .cursor-aura-visual {
@@ -334,8 +335,8 @@
   }
 
   #cursor-ring[data-clicking="true"] .cursor-ring-visual {
-    border-color: #ff6b35;
-    box-shadow: 0 0 16px rgb(255 107 53 / 0.95);
+    border-color: #000000;
+    box-shadow: 0 0 16px rgb(0 0 0 / 0.75);
   }
 
   @keyframes rotateCursor {
@@ -349,10 +350,10 @@
 
   @keyframes cursorPulse {
     0%, 100% {
-      box-shadow: 0 0 6px 2px rgb(255 107 53 / 0.8);
+      box-shadow: 0 0 6px 2px rgb(245 240 232 / 0.8);
     }
     50% {
-      box-shadow: 0 0 12px 5px rgb(255 107 53 / 0.4);
+      box-shadow: 0 0 12px 5px rgb(245 240 232 / 0.4);
     }
   }
 
