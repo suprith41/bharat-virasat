@@ -24,7 +24,7 @@ export function Footer() {
           <ul className="space-y-2.5 text-sm">
             <li><Link to="/map" className="text-foreground/80 hover:text-saffron-deep transition-colors">Interactive Map</Link></li>
             <li><Link to="/search" className="text-foreground/80 hover:text-saffron-deep transition-colors">Search Culture</Link></li>
-            <li><Link to="/state/RJ" className="text-foreground/80 hover:text-saffron-deep transition-colors">Featured State</Link></li>
+            <li><Link to="/state/$id" params={{ id: "RJ" }} className="text-foreground/80 hover:text-saffron-deep transition-colors">Featured State</Link></li>
             <li><Link to="/about" className="text-foreground/80 hover:text-saffron-deep transition-colors">About the Project</Link></li>
           </ul>
         </div>
