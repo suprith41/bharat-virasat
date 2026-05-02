@@ -13,7 +13,10 @@ export const Route = createFileRoute("/state/$id")({
     meta: loaderData
       ? [
           { title: `${loaderData.state.name} — Bharat Virasat` },
-          { name: "description", content: `${loaderData.state.tagline}. Festivals, food, art and heritage of ${loaderData.state.name}.` },
+          {
+            name: "description",
+            content: `${loaderData.state.tagline}. Festivals, food, art and heritage of ${loaderData.state.name}.`,
+          },
           { property: "og:title", content: `${loaderData.state.name} — Bharat Virasat` },
           { property: "og:description", content: loaderData.state.tagline },
         ]
@@ -22,7 +25,9 @@ export const Route = createFileRoute("/state/$id")({
   notFoundComponent: () => (
     <div className="pt-32 text-center">
       <h1 className="font-display text-3xl">State not yet curated</h1>
-      <Link to="/map" className="text-saffron-deep mt-4 inline-block">Back to map →</Link>
+      <Link to="/map" className="text-saffron-deep mt-4 inline-block">
+        Back to map →
+      </Link>
     </div>
   ),
   errorComponent: ({ error }) => (
@@ -71,9 +76,13 @@ function StatePage() {
 
         <div className="relative h-full mx-auto max-w-7xl px-6 flex flex-col justify-end pb-12 pt-28">
           <nav className="flex items-center gap-1.5 text-xs text-white/90 mb-4 drop-shadow-md">
-            <Link to="/" className="hover:underline">Home</Link>
+            <Link to="/" className="hover:underline">
+              Home
+            </Link>
             <ChevronRight className="h-3.5 w-3.5" />
-            <Link to="/map" className="hover:underline">Map</Link>
+            <Link to="/map" className="hover:underline">
+              Map
+            </Link>
             <ChevronRight className="h-3.5 w-3.5" />
             <span className="font-semibold">{state.name}</span>
           </nav>
@@ -103,7 +112,9 @@ function StatePage() {
                 <s.icon className="h-4 w-4 text-white" />
               </div>
               <div className="min-w-0">
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {s.label}
+                </div>
                 <div className="text-sm font-semibold truncate">{s.value}</div>
               </div>
             </div>
@@ -201,11 +212,16 @@ function CulturalCard({ item, kind }: { item: CulturalItem; kind: TabId }) {
       </div>
       <div className="p-5">
         <h3 className="font-display text-lg font-semibold mb-1.5">{item.title}</h3>
-        <p className="text-sm text-foreground/70 leading-relaxed line-clamp-2">{item.description}</p>
+        <p className="text-sm text-foreground/70 leading-relaxed line-clamp-2">
+          {item.description}
+        </p>
         {item.tags && (
           <div className="flex flex-wrap gap-1.5 mt-3">
             {item.tags.map((t) => (
-              <span key={t} className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-leaf/20 text-foreground/80">
+              <span
+                key={t}
+                className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-leaf/20 text-foreground/80"
+              >
                 {t}
               </span>
             ))}

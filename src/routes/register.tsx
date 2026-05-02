@@ -22,7 +22,8 @@ function RegisterPage() {
   const toggleFollow = (id: string) => {
     setFollowed((prev) => {
       const n = new Set(prev);
-      if (n.has(id)) n.delete(id); else n.add(id);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
       return n;
     });
   };
@@ -44,17 +45,27 @@ function RegisterPage() {
           <div className="flex items-center gap-2 mb-8">
             {STEPS.map((s, i) => (
               <div key={s} className="flex items-center gap-2 flex-1">
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                  i < step ? "saffron-gradient text-white" :
-                  i === step ? "saffron-gradient text-white shadow-[var(--shadow-glow-saffron)]" :
-                  "bg-secondary text-muted-foreground"
-                }`}>
+                <div
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                    i < step
+                      ? "saffron-gradient text-white"
+                      : i === step
+                        ? "saffron-gradient text-white shadow-[var(--shadow-glow-saffron)]"
+                        : "bg-secondary text-muted-foreground"
+                  }`}
+                >
                   {i < step ? <Check className="h-3.5 w-3.5" /> : i + 1}
                 </div>
-                <span className={`text-xs font-semibold uppercase tracking-wider ${i <= step ? "text-foreground" : "text-muted-foreground"}`}>
+                <span
+                  className={`text-xs font-semibold uppercase tracking-wider ${i <= step ? "text-foreground" : "text-muted-foreground"}`}
+                >
                   {s}
                 </span>
-                {i < STEPS.length - 1 && <div className={`flex-1 h-0.5 rounded-full ${i < step ? "saffron-gradient" : "bg-border"}`} />}
+                {i < STEPS.length - 1 && (
+                  <div
+                    className={`flex-1 h-0.5 rounded-full ${i < step ? "saffron-gradient" : "bg-border"}`}
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -63,17 +74,44 @@ function RegisterPage() {
             {step === 0 && (
               <div className="animate-fade-up">
                 <h1 className="font-display text-3xl font-bold mb-2">Create your account</h1>
-                <p className="text-muted-foreground mb-6 text-sm">A passport to India's heritage.</p>
-                <form onSubmit={(e) => { e.preventDefault(); setStep(1); }} className="space-y-4">
-                  <FloatingField icon={User} label="Full name" type="text" value={name} onChange={setName} />
-                  <FloatingField icon={Mail} label="Email" type="email" value={email} onChange={setEmail} />
-                  <FloatingField icon={Lock} label="Password" type="password" value={password} onChange={setPassword} />
+                <p className="text-muted-foreground mb-6 text-sm">
+                  A passport to India's heritage.
+                </p>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setStep(1);
+                  }}
+                  className="space-y-4"
+                >
+                  <FloatingField
+                    icon={User}
+                    label="Full name"
+                    type="text"
+                    value={name}
+                    onChange={setName}
+                  />
+                  <FloatingField
+                    icon={Mail}
+                    label="Email"
+                    type="email"
+                    value={email}
+                    onChange={setEmail}
+                  />
+                  <FloatingField
+                    icon={Lock}
+                    label="Password"
+                    type="password"
+                    value={password}
+                    onChange={setPassword}
+                  />
                   <button className="w-full py-3 rounded-full text-sm font-semibold text-white saffron-gradient shadow-[var(--shadow-glow-saffron)] hover:scale-[1.02] transition-transform inline-flex items-center justify-center gap-2">
                     Continue <ArrowRight className="h-4 w-4" />
                   </button>
                 </form>
                 <div className="my-5 flex items-center gap-4 text-xs text-muted-foreground">
-                  <div className="flex-1 h-px bg-border" /> OR <div className="flex-1 h-px bg-border" />
+                  <div className="flex-1 h-px bg-border" /> OR{" "}
+                  <div className="flex-1 h-px bg-border" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <SocialButton brand="Google" />
@@ -113,10 +151,16 @@ function RegisterPage() {
                   })}
                 </div>
                 <div className="flex gap-3">
-                  <button onClick={() => setStep(0)} className="px-5 py-3 rounded-full text-sm font-semibold border border-border">
+                  <button
+                    onClick={() => setStep(0)}
+                    className="px-5 py-3 rounded-full text-sm font-semibold border border-border"
+                  >
                     Back
                   </button>
-                  <button onClick={() => setStep(2)} className="flex-1 py-3 rounded-full text-sm font-semibold text-white saffron-gradient inline-flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setStep(2)}
+                    className="flex-1 py-3 rounded-full text-sm font-semibold text-white saffron-gradient inline-flex items-center justify-center gap-2"
+                  >
                     Continue <ArrowRight className="h-4 w-4" />
                   </button>
                 </div>
@@ -128,9 +172,16 @@ function RegisterPage() {
                 <div className="mx-auto w-20 h-20 rounded-full saffron-gradient flex items-center justify-center mb-6 shadow-[var(--shadow-glow-saffron)] animate-scale-in">
                   <Check className="h-10 w-10 text-white" />
                 </div>
-                <h1 className="font-display text-3xl font-bold mb-2">स्वागतम्, {name || "friend"}!</h1>
-                <p className="text-muted-foreground mb-8">Your journey through India's heritage begins now.</p>
-                <button onClick={() => navigate({ to: "/map" })} className="px-7 py-3 rounded-full text-sm font-semibold text-white saffron-gradient shadow-[var(--shadow-glow-saffron)] inline-flex items-center gap-2">
+                <h1 className="font-display text-3xl font-bold mb-2">
+                  स्वागतम्, {name || "friend"}!
+                </h1>
+                <p className="text-muted-foreground mb-8">
+                  Your journey through India's heritage begins now.
+                </p>
+                <button
+                  onClick={() => navigate({ to: "/map" })}
+                  className="px-7 py-3 rounded-full text-sm font-semibold text-white saffron-gradient shadow-[var(--shadow-glow-saffron)] inline-flex items-center gap-2"
+                >
                   Explore the map <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -139,7 +190,10 @@ function RegisterPage() {
 
           {step !== 2 && (
             <p className="text-sm text-center text-muted-foreground mt-6">
-              Already have an account? <Link to="/login" className="text-saffron-deep font-semibold hover:underline">Login</Link>
+              Already have an account?{" "}
+              <Link to="/login" className="text-saffron-deep font-semibold hover:underline">
+                Login
+              </Link>
             </p>
           )}
         </div>

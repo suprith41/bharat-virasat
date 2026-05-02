@@ -104,10 +104,16 @@ export function Navbar() {
               </Link>
             ))}
             <div className="pt-3 grid grid-cols-2 gap-2">
-              <Link to="/login" className="px-4 py-2.5 rounded-full text-center text-sm font-medium border border-border">
+              <Link
+                to="/login"
+                className="px-4 py-2.5 rounded-full text-center text-sm font-medium border border-border"
+              >
                 Login
               </Link>
-              <Link to="/register" className="px-4 py-2.5 rounded-full text-center text-sm font-semibold text-white saffron-gradient">
+              <Link
+                to="/register"
+                className="px-4 py-2.5 rounded-full text-center text-sm font-semibold text-white saffron-gradient"
+              >
                 Register
               </Link>
             </div>

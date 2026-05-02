@@ -1,4 +1,11 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
+import {
+  Outlet,
+  Link,
+  createRootRoute,
+  HeadContent,
+  Scripts,
+  useRouterState,
+} from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -29,10 +36,18 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Bharat Virasat — Discover the Soul of India" },
-      { name: "description", content: "A digital cultural museum of India: 28 states, thousands of festivals, art forms and traditions in one immersive archive." },
+      {
+        name: "description",
+        content:
+          "A digital cultural museum of India: 28 states, thousands of festivals, art forms and traditions in one immersive archive.",
+      },
       { name: "author", content: "Bharat Virasat" },
       { property: "og:title", content: "Bharat Virasat — Discover the Soul of India" },
-      { property: "og:description", content: "Explore India's living heritage through an interactive map of states, festivals, food and art." },
+      {
+        property: "og:description",
+        content:
+          "Explore India's living heritage through an interactive map of states, festivals, food and art.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -40,7 +55,10 @@ export const Route = createRootRoute({
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,

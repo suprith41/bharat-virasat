@@ -8,7 +8,11 @@ export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
       { title: "Interactive Map — Bharat Virasat" },
-      { name: "description", content: "Explore every Indian state on an interactive cultural map. Hover for festivals, click to dive deeper." },
+      {
+        name: "description",
+        content:
+          "Explore every Indian state on an interactive cultural map. Hover for festivals, click to dive deeper.",
+      },
     ],
   }),
   component: MapPage,
@@ -115,7 +119,10 @@ function MapPage() {
               <svg
                 viewBox="0 0 700 800"
                 className="w-full h-auto"
-                onMouseLeave={() => { setHovered(null); setTooltip(null); }}
+                onMouseLeave={() => {
+                  setHovered(null);
+                  setTooltip(null);
+                }}
               >
                 <defs>
                   <linearGradient id="hover-grad" x1="0" y1="0" x2="1" y2="1">
@@ -123,7 +130,13 @@ function MapPage() {
                     <stop offset="100%" stopColor="oklch(0.65 0.2 35)" />
                   </linearGradient>
                   <filter id="lift" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="oklch(0.4 0.15 40)" floodOpacity="0.45" />
+                    <feDropShadow
+                      dx="0"
+                      dy="6"
+                      stdDeviation="6"
+                      floodColor="oklch(0.4 0.15 40)"
+                      floodOpacity="0.45"
+                    />
                   </filter>
                 </defs>
 
@@ -136,10 +149,11 @@ function MapPage() {
                       key={s.id}
                       onMouseEnter={(e) => {
                         setHovered(s.id);
-                        const svg = (e.currentTarget.ownerSVGElement) as SVGSVGElement;
+                        const svg = e.currentTarget.ownerSVGElement as SVGSVGElement;
                         const rect = svg.getBoundingClientRect();
                         const pt = svg.createSVGPoint();
-                        pt.x = s.cx; pt.y = s.cy;
+                        pt.x = s.cx;
+                        pt.y = s.cy;
                         const ctm = svg.getScreenCTM();
                         if (ctm) {
                           const screen = pt.matrixTransform(ctm);
@@ -148,11 +162,20 @@ function MapPage() {
                       }}
                       onClick={() => goToState(s.id)}
                       className="cursor-pointer"
-                      style={{ filter: isHover ? "url(#lift)" : undefined, transition: "filter 0.25s" }}
+                      style={{
+                        filter: isHover ? "url(#lift)" : undefined,
+                        transition: "filter 0.25s",
+                      }}
                     >
                       <path
                         d={s.d}
-                        fill={isHover ? "url(#hover-grad)" : isVisible ? REGION_FILL[s.region] : "oklch(0.95 0.005 80)"}
+                        fill={
+                          isHover
+                            ? "url(#hover-grad)"
+                            : isVisible
+                              ? REGION_FILL[s.region]
+                              : "oklch(0.95 0.005 80)"
+                        }
                         stroke="white"
                         strokeWidth="2"
                         strokeLinejoin="round"
@@ -161,7 +184,10 @@ function MapPage() {
                           transition: "fill 0.3s, opacity 0.3s, transform 0.25s",
                           transformOrigin: `${s.cx}px ${s.cy}px`,
                           transform: isHover ? "translateY(-3px) scale(1.02)" : "none",
-                          animation: isFeatured && isVisible && !isHover ? "pulse-glow 2.5s ease-in-out infinite" : undefined,
+                          animation:
+                            isFeatured && isVisible && !isHover
+                              ? "pulse-glow 2.5s ease-in-out infinite"
+                              : undefined,
                         }}
                       />
                       <text
@@ -169,7 +195,12 @@ function MapPage() {
                         y={s.cy}
                         textAnchor="middle"
                         className="pointer-events-none select-none"
-                        style={{ fontSize: 10, fontWeight: 600, fill: isHover ? "white" : "oklch(0.3 0.05 40)", transition: "fill 0.25s" }}
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          fill: isHover ? "white" : "oklch(0.3 0.05 40)",
+                          transition: "fill 0.25s",
+                        }}
                       >
                         {s.id}
                       </text>
@@ -189,13 +220,22 @@ function MapPage() {
                 >
                   <div
                     className="h-16 rounded-xl mb-3"
-                    style={{ background: STATES[hoveredState.id]?.bannerGradient || REGION_FILL[hoveredState.region] }}
+                    style={{
+                      background:
+                        STATES[hoveredState.id]?.bannerGradient || REGION_FILL[hoveredState.region],
+                    }}
                   />
                   <div className="font-display font-bold text-base mb-1">{hoveredState.name}</div>
                   {detailedHover ? (
                     <div className="space-y-1.5 text-xs text-foreground/70">
-                      <div><span className="font-semibold text-saffron-deep">Festival:</span> {detailedHover.iconicFestival}</div>
-                      <div><span className="font-semibold text-saffron-deep">Dish:</span> {detailedHover.signatureDish}</div>
+                      <div>
+                        <span className="font-semibold text-saffron-deep">Festival:</span>{" "}
+                        {detailedHover.iconicFestival}
+                      </div>
+                      <div>
+                        <span className="font-semibold text-saffron-deep">Dish:</span>{" "}
+                        {detailedHover.signatureDish}
+                      </div>
                     </div>
                   ) : (
                     <div className="text-xs text-muted-foreground">Profile coming soon</div>
@@ -205,12 +245,17 @@ function MapPage() {
 
               {/* Legend */}
               <div className="mt-4 flex flex-wrap gap-3 text-[11px] text-muted-foreground">
-                {(["north","south","east","west","northeast","central"] as Region[]).map((r) => (
-                  <div key={r} className="flex items-center gap-1.5">
-                    <span className="inline-block w-3 h-3 rounded-sm" style={{ background: REGION_FILL[r] }} />
-                    <span className="capitalize">{r}</span>
-                  </div>
-                ))}
+                {(["north", "south", "east", "west", "northeast", "central"] as Region[]).map(
+                  (r) => (
+                    <div key={r} className="flex items-center gap-1.5">
+                      <span
+                        className="inline-block w-3 h-3 rounded-sm"
+                        style={{ background: REGION_FILL[r] }}
+                      />
+                      <span className="capitalize">{r}</span>
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           </div>
@@ -225,11 +270,16 @@ function MapPage() {
                 <div className="animate-fade-in">
                   <div
                     className="h-28 rounded-xl mb-4 relative overflow-hidden"
-                    style={{ background: STATES[hoveredState.id]?.bannerGradient || REGION_FILL[hoveredState.region] }}
+                    style={{
+                      background:
+                        STATES[hoveredState.id]?.bannerGradient || REGION_FILL[hoveredState.region],
+                    }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     <div className="absolute bottom-2 left-3 text-white">
-                      <div className="text-[10px] uppercase tracking-wider opacity-80">{hoveredState.region}</div>
+                      <div className="text-[10px] uppercase tracking-wider opacity-80">
+                        {hoveredState.region}
+                      </div>
                       <div className="font-display text-lg font-bold">{hoveredState.name}</div>
                     </div>
                   </div>
@@ -273,7 +323,9 @@ function MapPage() {
                         style={{ background: s.bannerGradient }}
                       >
                         <div className="absolute inset-0 bg-black/30" />
-                        <span className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">{s.name}</span>
+                        <span className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
+                          {s.name}
+                        </span>
                       </button>
                     );
                   })}

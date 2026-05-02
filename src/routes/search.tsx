@@ -7,7 +7,10 @@ export const Route = createFileRoute("/search")({
   head: () => ({
     meta: [
       { title: "Search — Bharat Virasat" },
-      { name: "description", content: "Search across festivals, food, art and heritage of every Indian state." },
+      {
+        name: "description",
+        content: "Search across festivals, food, art and heritage of every Indian state.",
+      },
     ],
   }),
   component: SearchPage,
@@ -30,7 +33,16 @@ const FILTERS = [
 ] as const;
 type FilterId = (typeof FILTERS)[number]["id"];
 
-const TRENDING = ["Durga Puja", "Onam Sadya", "Bhangra", "Kathakali", "Pushkar Fair", "Roshogolla", "Tanjore", "Ghoomar"];
+const TRENDING = [
+  "Durga Puja",
+  "Onam Sadya",
+  "Bhangra",
+  "Kathakali",
+  "Pushkar Fair",
+  "Roshogolla",
+  "Tanjore",
+  "Ghoomar",
+];
 
 interface ResultItem extends CulturalItem {
   state: string;
@@ -72,11 +84,12 @@ function SearchPage() {
     if (activeFilters.size > 0) r = r.filter((i) => activeFilters.has(i.category));
     if (q.trim()) {
       const qq = q.toLowerCase();
-      r = r.filter((i) =>
-        i.title.toLowerCase().includes(qq) ||
-        i.description.toLowerCase().includes(qq) ||
-        i.state.toLowerCase().includes(qq) ||
-        (i.tags || []).some((t) => t.toLowerCase().includes(qq))
+      r = r.filter(
+        (i) =>
+          i.title.toLowerCase().includes(qq) ||
+          i.description.toLowerCase().includes(qq) ||
+          i.state.toLowerCase().includes(qq) ||
+          (i.tags || []).some((t) => t.toLowerCase().includes(qq)),
       );
     }
     return r;
@@ -85,7 +98,8 @@ function SearchPage() {
   const toggle = (id: FilterId) => {
     setActiveFilters((prev) => {
       const n = new Set(prev);
-      if (n.has(id)) n.delete(id); else n.add(id);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
       return n;
     });
   };
@@ -112,7 +126,12 @@ function SearchPage() {
               className="flex-1 bg-transparent focus:outline-none text-base placeholder:text-muted-foreground transition-all"
             />
             {q && (
-              <button onClick={() => setQ("")} className="text-xs text-muted-foreground hover:text-foreground">Clear</button>
+              <button
+                onClick={() => setQ("")}
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
+                Clear
+              </button>
             )}
           </div>
         </div>
@@ -161,9 +180,26 @@ function SearchPage() {
               <div className="mx-auto w-32 h-32 rounded-full saffron-gradient opacity-20 blur-2xl mb-[-80px]" />
               <div className="relative">
                 <svg viewBox="0 0 120 120" className="mx-auto w-32 h-32">
-                  <circle cx="50" cy="50" r="30" fill="none" stroke="var(--saffron-deep)" strokeWidth="3" />
-                  <line x1="72" y1="72" x2="95" y2="95" stroke="var(--saffron-deep)" strokeWidth="3" strokeLinecap="round" />
-                  <text x="60" y="55" textAnchor="middle" fontSize="20">🪔</text>
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="30"
+                    fill="none"
+                    stroke="var(--saffron-deep)"
+                    strokeWidth="3"
+                  />
+                  <line
+                    x1="72"
+                    y1="72"
+                    x2="95"
+                    y2="95"
+                    stroke="var(--saffron-deep)"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                  <text x="60" y="55" textAnchor="middle" fontSize="20">
+                    🪔
+                  </text>
                 </svg>
               </div>
               <h3 className="font-display text-2xl font-semibold mt-4">Nothing found</h3>
@@ -191,7 +227,9 @@ function SearchPage() {
                     />
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[10px] uppercase tracking-wider text-saffron-deep font-bold">{r.category}</span>
+                        <span className="text-[10px] uppercase tracking-wider text-saffron-deep font-bold">
+                          {r.category}
+                        </span>
                         <span className="text-[10px] text-muted-foreground">{r.state}</span>
                       </div>
                       <h3 className="font-display font-semibold text-base mb-1">{r.title}</h3>

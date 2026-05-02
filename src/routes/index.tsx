@@ -7,7 +7,10 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Bharat Virasat — Discover the Soul of India" },
-      { name: "description", content: "28 states. Thousands of traditions. One living archive of Indian culture." },
+      {
+        name: "description",
+        content: "28 states. Thousands of traditions. One living archive of Indian culture.",
+      },
     ],
   }),
   component: Index,
@@ -66,7 +69,9 @@ function StatsBar() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => e.isIntersecting && setVis(true), { threshold: 0.3 });
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && setVis(true), {
+      threshold: 0.3,
+    });
     io.observe(el);
     return () => io.disconnect();
   }, []);
@@ -87,12 +92,23 @@ function StatsBar() {
   );
 }
 
-function Stat({ n, label, suffix, vis }: { n: number; label: string; suffix?: string; vis: boolean }) {
+function Stat({
+  n,
+  label,
+  suffix,
+  vis,
+}: {
+  n: number;
+  label: string;
+  suffix?: string;
+  vis: boolean;
+}) {
   const v = useCountUp(n, vis);
   return (
     <div className="text-center">
       <div className="font-display text-3xl md:text-4xl font-bold text-saffron-deep">
-        {v}{suffix}
+        {v}
+        {suffix}
       </div>
       <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground mt-1">{label}</div>
     </div>
@@ -125,7 +141,10 @@ function TiltCard() {
           <div
             key={s.id}
             className="aspect-square rounded-xl flex items-end p-2"
-            style={{ background: s.thumbGradient, animation: `float ${4 + i * 0.4}s ease-in-out ${i * 0.2}s infinite` }}
+            style={{
+              background: s.thumbGradient,
+              animation: `float ${4 + i * 0.4}s ease-in-out ${i * 0.2}s infinite`,
+            }}
           >
             <span className="text-[10px] font-semibold text-foreground/70 bg-white/60 backdrop-blur rounded-full px-2 py-0.5">
               {s.name}
@@ -139,9 +158,24 @@ function TiltCard() {
 
 function Index() {
   const features = [
-    { icon: Map, title: "Interactive Map", desc: "Click any state to dive into its festivals, food and art forms.", color: "var(--saffron)" },
-    { icon: BookOpen, title: "Curated Culture", desc: "Hand-researched entries on traditions both famous and forgotten.", color: "var(--peacock)" },
-    { icon: Search, title: "Smart Search", desc: "Find what calls to you across thousands of cultural artifacts.", color: "var(--lotus)" },
+    {
+      icon: Map,
+      title: "Interactive Map",
+      desc: "Click any state to dive into its festivals, food and art forms.",
+      color: "var(--saffron)",
+    },
+    {
+      icon: BookOpen,
+      title: "Curated Culture",
+      desc: "Hand-researched entries on traditions both famous and forgotten.",
+      color: "var(--peacock)",
+    },
+    {
+      icon: Search,
+      title: "Smart Search",
+      desc: "Find what calls to you across thousands of cultural artifacts.",
+      color: "var(--lotus)",
+    },
   ];
 
   return (
@@ -152,20 +186,42 @@ function Index() {
         <div
           className="absolute inset-0"
           style={{
-            background: "linear-gradient(180deg, oklch(0.97 0.04 70) 0%, oklch(0.93 0.08 50) 50%, oklch(0.88 0.1 30) 100%)",
+            background:
+              "linear-gradient(180deg, oklch(0.97 0.04 70) 0%, oklch(0.93 0.08 50) 50%, oklch(0.88 0.1 30) 100%)",
           }}
         />
         {/* Silhouette layer 1 — distant hills */}
-        <svg className="absolute bottom-0 inset-x-0 w-full h-1/2 opacity-40" viewBox="0 0 1200 400" preserveAspectRatio="none">
-          <path d="M0,400 L0,250 Q150,180 300,220 T600,200 T900,230 T1200,210 L1200,400 Z" fill="oklch(0.78 0.08 30 / 0.4)" />
+        <svg
+          className="absolute bottom-0 inset-x-0 w-full h-1/2 opacity-40"
+          viewBox="0 0 1200 400"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0,400 L0,250 Q150,180 300,220 T600,200 T900,230 T1200,210 L1200,400 Z"
+            fill="oklch(0.78 0.08 30 / 0.4)"
+          />
         </svg>
         {/* Silhouette layer 2 — temples */}
-        <svg className="absolute bottom-0 inset-x-0 w-full h-1/2 opacity-60" viewBox="0 0 1200 400" preserveAspectRatio="none">
-          <path d="M0,400 L0,320 L80,320 L100,260 L130,320 L200,320 L220,200 L240,260 L260,200 L280,320 L380,320 L400,280 L420,220 L440,180 L460,220 L480,280 L500,320 L700,320 L720,240 L740,180 L760,140 L780,180 L800,240 L820,320 L1000,320 L1020,270 L1050,320 L1200,320 L1200,400 Z" fill="oklch(0.55 0.1 25 / 0.55)" />
+        <svg
+          className="absolute bottom-0 inset-x-0 w-full h-1/2 opacity-60"
+          viewBox="0 0 1200 400"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0,400 L0,320 L80,320 L100,260 L130,320 L200,320 L220,200 L240,260 L260,200 L280,320 L380,320 L400,280 L420,220 L440,180 L460,220 L480,280 L500,320 L700,320 L720,240 L740,180 L760,140 L780,180 L800,240 L820,320 L1000,320 L1020,270 L1050,320 L1200,320 L1200,400 Z"
+            fill="oklch(0.55 0.1 25 / 0.55)"
+          />
         </svg>
         {/* Silhouette layer 3 — foreground */}
-        <svg className="absolute bottom-0 inset-x-0 w-full h-1/3 opacity-80" viewBox="0 0 1200 200" preserveAspectRatio="none">
-          <path d="M0,200 L0,150 Q200,120 400,140 T800,130 T1200,140 L1200,200 Z" fill="oklch(0.35 0.08 25 / 0.7)" />
+        <svg
+          className="absolute bottom-0 inset-x-0 w-full h-1/3 opacity-80"
+          viewBox="0 0 1200 200"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0,200 L0,150 Q200,120 400,140 T800,130 T1200,140 L1200,200 Z"
+            fill="oklch(0.35 0.08 25 / 0.7)"
+          />
         </svg>
         {/* Sun */}
         <div
@@ -176,8 +232,8 @@ function Index() {
 
         <div className="relative z-10 text-center px-6 max-w-4xl animate-fade-up">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full glass text-xs font-medium tracking-wide">
-            <Sparkles className="h-3.5 w-3.5 text-saffron-deep" />
-            A living digital archive of Indian heritage
+            <Sparkles className="h-3.5 w-3.5 text-saffron-deep" />A living digital archive of Indian
+            heritage
           </div>
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.05] mb-6">
             <span className="text-shimmer">Discover the Soul</span>
@@ -185,8 +241,8 @@ function Index() {
             <span className="text-foreground">of India</span>
           </h1>
           <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto mb-10 leading-relaxed">
-            28 states. Thousands of traditions. One living archive — woven from
-            the festivals, flavors and folk arts that make India, India.
+            28 states. Thousands of traditions. One living archive — woven from the festivals,
+            flavors and folk arts that make India, India.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -226,13 +282,13 @@ function Index() {
               An archive that <span className="text-shimmer">breathes</span> with India's culture.
             </h2>
             <p className="text-foreground/75 text-lg leading-relaxed mb-4">
-              India is not one story — it is thirty thousand. Bharat Virasat is a digital
-              museum without walls, where every state contributes its own chapter of
-              festivals, recipes, dances and dialects.
+              India is not one story — it is thirty thousand. Bharat Virasat is a digital museum
+              without walls, where every state contributes its own chapter of festivals, recipes,
+              dances and dialects.
             </p>
             <p className="text-foreground/70 leading-relaxed">
-              Whether you're a curious traveler, a homesick diaspora, or simply someone
-              who wants to understand a country of a billion stories — start here.
+              Whether you're a curious traveler, a homesick diaspora, or simply someone who wants to
+              understand a country of a billion stories — start here.
             </p>
           </div>
           <TiltCard />
@@ -269,9 +325,14 @@ function Index() {
             <div className="text-xs uppercase tracking-[0.22em] text-saffron-deep font-semibold mb-2">
               Featured Journeys
             </div>
-            <h2 className="font-display text-3xl md:text-4xl font-bold">Begin where the stories sing loudest</h2>
+            <h2 className="font-display text-3xl md:text-4xl font-bold">
+              Begin where the stories sing loudest
+            </h2>
           </div>
-          <Link to="/map" className="hidden md:inline-flex items-center gap-2 text-sm font-medium text-saffron-deep hover:gap-3 transition-all">
+          <Link
+            to="/map"
+            className="hidden md:inline-flex items-center gap-2 text-sm font-medium text-saffron-deep hover:gap-3 transition-all"
+          >
             View all states <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -287,7 +348,9 @@ function Index() {
               <div className="absolute inset-0" style={{ background: s.bannerGradient }} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute inset-0 p-5 flex flex-col justify-end text-white">
-                <div className="text-[10px] uppercase tracking-[0.2em] opacity-80 mb-1">{s.region}</div>
+                <div className="text-[10px] uppercase tracking-[0.2em] opacity-80 mb-1">
+                  {s.region}
+                </div>
                 <div className="font-display text-2xl font-bold">{s.name}</div>
                 <div className="text-xs opacity-90 mt-1 line-clamp-2">{s.tagline}</div>
                 <div className="mt-3 inline-flex items-center gap-1 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">

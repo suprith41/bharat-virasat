@@ -9,7 +9,18 @@ export function Logo({ className = "h-8 w-8" }: { className?: string }) {
         const y1 = 32 + Math.sin(a) * 8;
         const x2 = 32 + Math.cos(a) * 26;
         const y2 = 32 + Math.sin(a) * 26;
-        return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--peacock)" strokeWidth="1.5" strokeLinecap="round" />;
+        return (
+          <line
+            key={i}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke="var(--peacock)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        );
       })}
     </svg>
   );
