@@ -119,11 +119,14 @@ bharat-virasat/
 This project is configured for deployment on **Cloudflare Workers** via the `@cloudflare/vite-plugin`.
 
 ```bash
-# Deploy to Cloudflare
-npx wrangler deploy
+# Build and deploy to Cloudflare
+npm run deploy
+
+# Run a local Cloudflare preview
+npm run deploy:preview
 ```
 
-Ensure your `wrangler.jsonc` is configured with your Cloudflare account details before deploying.
+Ensure your `wrangler.jsonc` is configured with your Cloudflare account details before deploying. The deploy scripts use the generated `dist/server/wrangler.json`, so you do not need a separate global Wrangler install.
 
 ---
 

@@ -82,7 +82,7 @@ function StatsBar() {
     { n: 200, label: "Art Forms", suffix: "+" },
   ];
   return (
-    <div ref={ref} className="mx-auto max-w-5xl px-6 -mt-14 relative z-10">
+    <div ref={ref} className="mx-auto max-w-5xl px-6 relative z-10 pt-8">
       <div className="glass-strong rounded-full px-6 py-5 grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((s) => (
           <Stat key={s.label} {...s} vis={vis} />
@@ -181,54 +181,19 @@ function Index() {
   return (
     <div className="relative">
       {/* HERO */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Layered parallax background */}
+      <section className="relative h-screen min-h-screen flex items-center justify-center overflow-hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
+          src="https://videos.pexels.com/video-files/6583710/6583710-uhd_3840_2160_25fps.mp4"
+        />
         <div
           className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, oklch(0.97 0.04 70) 0%, oklch(0.93 0.08 50) 50%, oklch(0.88 0.1 30) 100%)",
-          }}
+          style={{ background: "rgba(0,0,0,0.25)" }}
         />
-        {/* Silhouette layer 1 — distant hills */}
-        <svg
-          className="absolute bottom-0 inset-x-0 w-full h-1/2 opacity-40"
-          viewBox="0 0 1200 400"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,400 L0,250 Q150,180 300,220 T600,200 T900,230 T1200,210 L1200,400 Z"
-            fill="oklch(0.78 0.08 30 / 0.4)"
-          />
-        </svg>
-        {/* Silhouette layer 2 — temples */}
-        <svg
-          className="absolute bottom-0 inset-x-0 w-full h-1/2 opacity-60"
-          viewBox="0 0 1200 400"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,400 L0,320 L80,320 L100,260 L130,320 L200,320 L220,200 L240,260 L260,200 L280,320 L380,320 L400,280 L420,220 L440,180 L460,220 L480,280 L500,320 L700,320 L720,240 L740,180 L760,140 L780,180 L800,240 L820,320 L1000,320 L1020,270 L1050,320 L1200,320 L1200,400 Z"
-            fill="oklch(0.55 0.1 25 / 0.55)"
-          />
-        </svg>
-        {/* Silhouette layer 3 — foreground */}
-        <svg
-          className="absolute bottom-0 inset-x-0 w-full h-1/3 opacity-80"
-          viewBox="0 0 1200 200"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,200 L0,150 Q200,120 400,140 T800,130 T1200,140 L1200,200 Z"
-            fill="oklch(0.35 0.08 25 / 0.7)"
-          />
-        </svg>
-        {/* Sun */}
-        <div
-          className="absolute top-[20%] left-1/2 -translate-x-1/2 w-72 h-72 rounded-full opacity-50 blur-3xl"
-          style={{ background: "radial-gradient(circle, oklch(0.9 0.15 70) 0%, transparent 70%)" }}
-        />
-        <Particles />
 
         <div className="relative z-10 text-center px-6 max-w-4xl animate-fade-up">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full glass text-xs font-medium tracking-wide">
