@@ -39,7 +39,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "A digital cultural museum of India: 28 states, thousands of festivals, art forms and traditions in one immersive archive.",
+          "A digital cultural museum of India: 35 states, thousands of festivals, art forms and traditions in one immersive archive.",
       },
       { name: "author", content: "Bharat Virasat" },
       { property: "og:title", content: "Bharat Virasat — Discover the Soul of India" },

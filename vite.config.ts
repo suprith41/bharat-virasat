@@ -11,5 +11,12 @@ export default defineConfig({
     build: {
       outDir: "dist",
     },
+    // Disable HMR/react-refresh for dev to avoid preamble mismatch
+    // The project uses a shared config that injects many plugins; disabling
+    // HMR here prevents the runtime throw when dynamically importing
+    // files that lack the refresh preamble (e.g. ?tsr-split imports).
+    server: {
+      hmr: false,
+    },
   },
 });

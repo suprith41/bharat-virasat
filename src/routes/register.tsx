@@ -5,6 +5,7 @@ import { Logo } from "@/components/Logo";
 import { AuthArt } from "@/components/AuthArt";
 import { FloatingField, SocialButton } from "@/routes/login";
 import { STATE_LIST } from "@/data/states";
+import { StateCardImage } from "@/components/StateCardImage";
 
 export const Route = createFileRoute("/register")({
   head: () => ({ meta: [{ title: "Register — Bharat Virasat" }] }),
@@ -135,8 +136,12 @@ function RegisterPage() {
                         type="button"
                         onClick={() => toggleFollow(s.id)}
                         className={`relative h-24 rounded-xl overflow-hidden text-left transition-all ${on ? "ring-2 ring-saffron-deep ring-offset-2" : "hover:scale-105"}`}
-                        style={{ background: s.bannerGradient }}
                       >
+                        <StateCardImage
+                          src={s.cardImage}
+                          alt={s.name}
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         <div className="absolute bottom-2 left-2 right-2 text-white">
                           <div className="text-sm font-bold">{s.name}</div>

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Map, BookOpen, Search, Sparkles, ArrowRight } from "lucide-react";
 import { STATE_LIST } from "@/data/states";
+import { StateCardImage } from "@/components/StateCardImage";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -9,7 +10,7 @@ export const Route = createFileRoute("/")({
       { title: "Bharat Virasat — Discover the Soul of India" },
       {
         name: "description",
-        content: "28 states. Thousands of traditions. One living archive of Indian culture.",
+        content: "35 states. Thousands of traditions. One living archive of Indian culture.",
       },
     ],
   }),
@@ -76,7 +77,7 @@ function StatsBar() {
     return () => io.disconnect();
   }, []);
   const stats = [
-    { n: 28, label: "States" },
+    { n: 35, label: "States" },
     { n: 6, label: "Union Territories" },
     { n: 100, label: "Festivals", suffix: "+" },
     { n: 200, label: "Art Forms", suffix: "+" },
@@ -206,7 +207,7 @@ function Index() {
             <span className="text-foreground">of India</span>
           </h1>
           <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto mb-10 leading-relaxed">
-            28 states. Thousands of traditions. One living archive — woven from the festivals,
+            35 states. Thousands of traditions. One living archive — woven from the festivals,
             flavors and folk arts that make India, India.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
@@ -310,7 +311,11 @@ function Index() {
               className="group rounded-2xl overflow-hidden lift-on-hover relative h-64"
               style={{ animation: `scale-in 0.5s ease-out ${i * 0.08}s both` }}
             >
-              <div className="absolute inset-0" style={{ background: s.bannerGradient }} />
+              <StateCardImage
+                src={s.cardImage}
+                alt={s.name}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute inset-0 p-5 flex flex-col justify-end text-white">
                 <div className="text-[10px] uppercase tracking-[0.2em] opacity-80 mb-1">

@@ -8,6 +8,7 @@ import parseSvgPath from "svg-path-parser";
 import { MAP_STATES } from "@/data/indiaMap";
 import { STATES, REGIONS, REGION_FILL, type Region } from "@/data/states";
 import { normalizeStateName } from "@/lib/stateRouting";
+import { StateCardImage } from "@/components/StateCardImage";
 
 export const Route = createFileRoute("/map")({
   head: () => ({
@@ -472,14 +473,18 @@ function MapPage() {
                     if (!stateInfo) return null;
                     return (
                       <button
-                          key={entry.id}
-                          onClick={() => goToState(entry.name)}
+                        key={entry.id}
+                        onClick={() => goToState(entry.name)}
                         className="rounded-xl h-16 relative overflow-hidden lift-on-hover"
-                          style={{ background: stateInfo.bannerGradient }}
                       >
+                        <StateCardImage
+                          src={stateInfo.cardImage}
+                          alt={stateInfo.name}
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
                         <div className="absolute inset-0 bg-black/30" />
                         <span className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
-                            {stateInfo.name}
+                          {stateInfo.name}
                         </span>
                       </button>
                     );

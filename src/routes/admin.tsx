@@ -50,7 +50,7 @@ const NAV = [
 const KPIS = [
   {
     label: "Total States",
-    value: "28",
+    value: "35",
     delta: "+2",
     up: true,
     color: "var(--saffron)",
