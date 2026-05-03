@@ -77,8 +77,8 @@ function StatsBar() {
     return () => io.disconnect();
   }, []);
   const stats = [
-    { n: 35, label: "States" },
-    { n: 6, label: "Union Territories" },
+    { n: 28, label: "States" },
+    { n: 8, label: "Union Territories" },
     { n: 100, label: "Festivals", suffix: "+" },
     { n: 200, label: "Art Forms", suffix: "+" },
   ];

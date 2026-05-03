@@ -47,13 +47,27 @@ const NAV = [
   { id: "settings", icon: Settings, label: "Settings" },
 ];
 
+const IVORY = "#FFFDF7";
+const INK = "#1a1a1a";
+const MUTED = "#555555";
+const SAFFRON = "#FF6F00";
+const PEACOCK = "#006989";
+const LOTUS = "#D96C9D";
+const LEAF = "#6FA35B";
+const SOFT_BORDER = "rgba(0,0,0,0.08)";
+const SOFT_SHADOW = "0 18px 40px rgba(26, 26, 26, 0.08)";
+const PANEL_CLASS =
+  "rounded-2xl border border-[rgba(0,0,0,0.08)] bg-white/88 shadow-[0_18px_40px_rgba(26,26,26,0.08)] backdrop-blur-xl";
+const INPUT_CLASS =
+  "w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[#FFFDF7] px-4 py-2.5 text-sm text-[#1a1a1a] placeholder:text-[#555555]/70 focus:outline-none focus:ring-2 focus:ring-[#FF6F00]/20 focus:border-[#FF6F00]";
+
 const KPIS = [
   {
     label: "Total States",
     value: "35",
     delta: "+2",
     up: true,
-    color: "var(--saffron)",
+    color: SAFFRON,
     spark: [12, 14, 13, 18, 22, 25, 28],
   },
   {
@@ -61,7 +75,7 @@ const KPIS = [
     value: "12.4k",
     delta: "+18%",
     up: true,
-    color: "var(--peacock)",
+    color: PEACOCK,
     spark: [8, 9, 11, 10, 12, 13, 12.4],
   },
   {
@@ -69,7 +83,7 @@ const KPIS = [
     value: "847",
     delta: "+34",
     up: true,
-    color: "var(--lotus)",
+    color: LOTUS,
     spark: [600, 650, 700, 720, 780, 820, 847],
   },
   {
@@ -77,7 +91,7 @@ const KPIS = [
     value: "3",
     delta: "-2",
     up: false,
-    color: "var(--leaf)",
+    color: LEAF,
     spark: [8, 7, 6, 5, 4, 5, 3],
   },
 ];
@@ -88,11 +102,11 @@ const VISITS = Array.from({ length: 12 }).map((_, i) => ({
 }));
 
 const STATE_PIE = [
-  { name: "Rajasthan", value: 28, color: "oklch(0.7 0.18 50)" },
-  { name: "Kerala", value: 22, color: "oklch(0.72 0.13 145)" },
-  { name: "Tamil Nadu", value: 18, color: "oklch(0.65 0.2 25)" },
-  { name: "West Bengal", value: 16, color: "oklch(0.55 0.15 230)" },
-  { name: "Punjab", value: 16, color: "oklch(0.78 0.12 350)" },
+  { name: "Rajasthan", value: 28, color: SAFFRON },
+  { name: "Kerala", value: 22, color: PEACOCK },
+  { name: "Tamil Nadu", value: 18, color: LOTUS },
+  { name: "West Bengal", value: 16, color: LEAF },
+  { name: "Punjab", value: 16, color: SAFFRON },
 ];
 
 const CATEGORY_BARS = [
@@ -107,14 +121,20 @@ function AdminPage() {
   const [active, setActive] = useState("dashboard");
 
   return (
-    <div className="min-h-screen flex">
+    <div
+      className="min-h-screen flex bg-[#FFFDF7] text-[#1a1a1a]"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at top left, rgba(255,111,0,0.08), transparent 32%), radial-gradient(circle at bottom right, rgba(0,105,137,0.08), transparent 28%)",
+      }}
+    >
       {/* Sidebar */}
-      <aside className="w-60 shrink-0 glass-dark border-r border-white/10 flex flex-col">
-        <Link to="/" className="flex items-center gap-2 px-6 py-5 border-b border-white/10">
+      <aside className="w-60 shrink-0 border-r border-[rgba(0,0,0,0.08)] bg-white/78 backdrop-blur-2xl flex flex-col">
+        <Link to="/" className="flex items-center gap-2 px-6 py-5 border-b border-[rgba(0,0,0,0.08)]">
           <Logo className="h-7 w-7" />
           <div>
-            <div className="font-display font-semibold text-foreground text-sm">Bharat Virasat</div>
-            <div className="text-[10px] uppercase tracking-wider text-saffron">Admin</div>
+            <div className="font-display font-semibold text-[#1a1a1a] text-sm">Bharat Virasat</div>
+            <div className="text-[10px] uppercase tracking-wider text-[#FF6F00]">Admin</div>
           </div>
         </Link>
         <nav className="flex-1 p-3 space-y-1">
@@ -124,23 +144,31 @@ function AdminPage() {
               onClick={() => setActive(n.id)}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 active === n.id
-                  ? "saffron-gradient text-white shadow-[var(--shadow-glow-saffron)]"
-                  : "text-foreground/70 hover:bg-white/5 hover:text-foreground"
+                  ? "text-white shadow-[0_14px_28px_rgba(255,111,0,0.24)]"
+                  : "text-[#1a1a1a] hover:bg-[#FFF4E8]"
               }`}
+              style={
+                active === n.id
+                  ? { background: "linear-gradient(135deg, #FF6F00 0%, #FF8F3D 100%)" }
+                  : undefined
+              }
             >
               <n.icon className="h-4 w-4" />
               {n.label}
             </button>
           ))}
         </nav>
-        <div className="p-4 border-t border-white/10">
-          <div className="glass-dark rounded-xl p-3 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full saffron-gradient flex items-center justify-center text-white font-bold">
+        <div className="p-4 border-t border-[rgba(0,0,0,0.08)]">
+          <div className={PANEL_CLASS + " p-3 flex items-center gap-3"}>
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold"
+              style={{ background: "linear-gradient(135deg, #FF6F00 0%, #FF8F3D 100%)" }}
+            >
               A
             </div>
             <div className="min-w-0">
-              <div className="text-sm font-semibold truncate">Admin User</div>
-              <div className="text-[10px] text-muted-foreground truncate">admin@virasat.in</div>
+              <div className="text-sm font-semibold text-[#1a1a1a] truncate">Admin User</div>
+              <div className="text-[10px] text-[#555555] truncate">admin@virasat.in</div>
             </div>
           </div>
         </div>
@@ -151,20 +179,23 @@ function AdminPage() {
         <div className="p-8">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="font-display text-3xl font-bold capitalize">{active}</h1>
-              <p className="text-muted-foreground text-sm mt-1">
+              <h1 className="font-display text-4xl font-bold capitalize text-[#1a1a1a]">{active}</h1>
+              <p className="text-[#555555] text-sm mt-1">
                 Manage Bharat Virasat's living archive.
               </p>
             </div>
             <div className="flex gap-3">
-              <div className="glass-dark rounded-full flex items-center px-4 py-2 gap-2 w-72">
-                <Search className="h-4 w-4 text-muted-foreground" />
+              <div className={PANEL_CLASS + " rounded-full flex items-center px-4 py-2 gap-2 w-72"}>
+                <Search className="h-4 w-4 text-[#555555]" />
                 <input
                   placeholder="Search…"
-                  className="flex-1 bg-transparent focus:outline-none text-sm"
+                  className="flex-1 bg-transparent focus:outline-none text-sm text-[#1a1a1a] placeholder:text-[#555555]/70"
                 />
               </div>
-              <button className="px-4 py-2 rounded-full text-sm font-semibold text-white saffron-gradient inline-flex items-center gap-2 shadow-[var(--shadow-glow-saffron)]">
+              <button
+                className="px-4 py-2 rounded-full text-sm font-semibold text-white inline-flex items-center gap-2 shadow-[0_14px_28px_rgba(255,111,0,0.24)]"
+                style={{ background: "linear-gradient(135deg, #FF6F00 0%, #FF8F3D 100%)" }}
+              >
                 <Plus className="h-4 w-4" /> New
               </button>
             </div>
@@ -187,18 +218,19 @@ function DashboardView() {
     <div className="space-y-8 animate-fade-up">
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {KPIS.map((k) => (
-          <div key={k.label} className="glass-dark rounded-2xl p-5 relative overflow-hidden">
+          <div key={k.label} className={PANEL_CLASS + " p-5 relative overflow-hidden"}>
             <div
               className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-30 blur-2xl"
               style={{ background: k.color }}
             />
             <div className="relative">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">
+              <div className="text-xs uppercase tracking-[0.24em] text-[#555555] font-semibold">
                 {k.label}
               </div>
-              <div className="font-display text-3xl font-bold mt-2">{k.value}</div>
+              <div className="font-display text-3xl font-bold mt-2 text-[#FF6F00]">{k.value}</div>
               <div
-                className={`mt-2 inline-flex items-center gap-1 text-xs font-semibold ${k.up ? "text-leaf" : "text-destructive"}`}
+                className="mt-2 inline-flex items-center gap-1 text-xs font-semibold"
+                style={{ color: k.up ? LEAF : SAFFRON }}
               >
                 {k.up ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 {k.delta}
@@ -222,44 +254,46 @@ function DashboardView() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 glass-dark rounded-2xl p-6">
+        <div className={"lg:col-span-2 " + PANEL_CLASS + " p-6"}>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display text-lg font-semibold">Visits over time</h3>
-            <span className="text-xs text-muted-foreground">Last 12 months</span>
+            <h3 className="font-display text-lg font-semibold text-[#1a1a1a]">Visits over time</h3>
+            <span className="text-xs uppercase tracking-[0.24em] text-[#555555]">Last 12 months</span>
           </div>
           <div className="h-72">
             <ResponsiveContainer>
               <LineChart data={VISITS}>
                 <defs>
                   <linearGradient id="visit-grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="oklch(0.78 0.17 60)" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="oklch(0.78 0.17 60)" stopOpacity={0} />
+                    <stop offset="0%" stopColor={SAFFRON} stopOpacity={0.22} />
+                    <stop offset="100%" stopColor={SAFFRON} stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="oklch(1 0 0 / 0.06)" vertical={false} />
-                <XAxis dataKey="month" stroke="oklch(0.7 0.03 240)" fontSize={11} />
-                <YAxis stroke="oklch(0.7 0.03 240)" fontSize={11} />
+                <CartesianGrid stroke={SOFT_BORDER} vertical={false} />
+                <XAxis dataKey="month" stroke={MUTED} fontSize={11} />
+                <YAxis stroke={MUTED} fontSize={11} />
                 <Tooltip
                   contentStyle={{
-                    background: "oklch(0.24 0.04 250)",
-                    border: "1px solid oklch(1 0 0 / 0.1)",
+                    background: "#FFFFFF",
+                    border: `1px solid ${SOFT_BORDER}`,
                     borderRadius: 12,
+                    boxShadow: SOFT_SHADOW,
+                    color: INK,
                   }}
                 />
                 <Line
                   type="monotone"
                   dataKey="visits"
-                  stroke="oklch(0.78 0.17 60)"
+                  stroke={SAFFRON}
                   strokeWidth={3}
-                  dot={{ fill: "oklch(0.78 0.17 60)", r: 4 }}
+                  dot={{ fill: SAFFRON, r: 4 }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="glass-dark rounded-2xl p-6">
-          <h3 className="font-display text-lg font-semibold mb-4">Most explored</h3>
+        <div className={PANEL_CLASS + " p-6"}>
+          <h3 className="font-display text-lg font-semibold mb-4 text-[#1a1a1a]">Most explored</h3>
           <div className="h-56">
             <ResponsiveContainer>
               <PieChart>
@@ -276,9 +310,11 @@ function DashboardView() {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    background: "oklch(0.24 0.04 250)",
-                    border: "1px solid oklch(1 0 0 / 0.1)",
+                    background: "#FFFFFF",
+                    border: `1px solid ${SOFT_BORDER}`,
                     borderRadius: 12,
+                    boxShadow: SOFT_SHADOW,
+                    color: INK,
                   }}
                 />
               </PieChart>
@@ -286,34 +322,36 @@ function DashboardView() {
           </div>
           <div className="space-y-1.5 mt-3">
             {STATE_PIE.map((s) => (
-              <div key={s.name} className="flex items-center justify-between text-xs">
+              <div key={s.name} className="flex items-center justify-between text-xs text-[#555555]">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full" style={{ background: s.color }} />
                   {s.name}
                 </div>
-                <span className="font-semibold">{s.value}%</span>
+                <span className="font-semibold text-[#1a1a1a]">{s.value}%</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="glass-dark rounded-2xl p-6">
-        <h3 className="font-display text-lg font-semibold mb-4">Content by category</h3>
+      <div className={PANEL_CLASS + " p-6"}>
+        <h3 className="font-display text-lg font-semibold mb-4 text-[#1a1a1a]">Content by category</h3>
         <div className="h-64">
           <ResponsiveContainer>
             <BarChart data={CATEGORY_BARS}>
-              <CartesianGrid stroke="oklch(1 0 0 / 0.06)" vertical={false} />
-              <XAxis dataKey="cat" stroke="oklch(0.7 0.03 240)" fontSize={11} />
-              <YAxis stroke="oklch(0.7 0.03 240)" fontSize={11} />
+              <CartesianGrid stroke={SOFT_BORDER} vertical={false} />
+              <XAxis dataKey="cat" stroke={MUTED} fontSize={11} />
+              <YAxis stroke={MUTED} fontSize={11} />
               <Tooltip
                 contentStyle={{
-                  background: "oklch(0.24 0.04 250)",
-                  border: "1px solid oklch(1 0 0 / 0.1)",
+                  background: "#FFFFFF",
+                  border: `1px solid ${SOFT_BORDER}`,
                   borderRadius: 12,
+                  boxShadow: SOFT_SHADOW,
+                  color: INK,
                 }}
               />
-              <Bar dataKey="count" fill="oklch(0.55 0.15 230)" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="count" fill={PEACOCK} radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -324,9 +362,9 @@ function DashboardView() {
 
 function StatesView() {
   return (
-    <div className="glass-dark rounded-2xl overflow-hidden animate-fade-up">
+    <div className={PANEL_CLASS + " overflow-hidden animate-fade-up"}>
       <table className="w-full text-sm">
-        <thead className="text-xs uppercase tracking-wider text-muted-foreground border-b border-white/10">
+        <thead className="text-xs uppercase tracking-[0.24em] text-[#555555] border-b border-[rgba(0,0,0,0.08)]">
           <tr>
             <th className="text-left px-6 py-3 font-semibold">
               <div className="inline-flex items-center gap-1 cursor-pointer">
@@ -342,13 +380,16 @@ function StatesView() {
         </thead>
         <tbody>
           {STATE_LIST.map((s) => (
-            <tr key={s.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+            <tr
+              key={s.id}
+              className="border-b border-[rgba(0,0,0,0.05)] hover:bg-[#FFF8ED] transition-colors"
+            >
               <td className="px-6 py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-lg" style={{ background: s.bannerGradient }} />
                   <div>
-                    <div className="font-semibold">{s.name}</div>
-                    <div className="text-[11px] text-muted-foreground">{s.tagline}</div>
+                    <div className="font-semibold text-[#1a1a1a]">{s.name}</div>
+                    <div className="text-[11px] text-[#555555]">{s.tagline}</div>
                   </div>
                 </div>
               </td>
@@ -364,13 +405,13 @@ function StatesView() {
               <td className="px-6 py-4">{s.unescoSites}</td>
               <td className="px-6 py-4 text-right">
                 <div className="inline-flex items-center gap-1">
-                  <button className="p-2 rounded-lg hover:bg-white/10">
+                  <button className="p-2 rounded-lg hover:bg-[#FFF4E8]">
                     <Edit2 className="h-3.5 w-3.5" />
                   </button>
-                  <button className="p-2 rounded-lg hover:bg-white/10 text-destructive">
+                  <button className="p-2 rounded-lg hover:bg-[#FFF4E8] text-[#C84B31]">
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
-                  <button className="p-2 rounded-lg hover:bg-white/10">
+                  <button className="p-2 rounded-lg hover:bg-[#FFF4E8]">
                     <MoreVertical className="h-3.5 w-3.5" />
                   </button>
                 </div>
@@ -386,34 +427,34 @@ function StatesView() {
 function FestivalsView() {
   return (
     <div className="grid lg:grid-cols-2 gap-6 animate-fade-up">
-      <div className="glass-dark rounded-2xl p-6">
-        <h3 className="font-display text-lg font-semibold mb-4">Add cultural entry</h3>
+      <div className={PANEL_CLASS + " p-6"}>
+        <h3 className="font-display text-lg font-semibold mb-4 text-[#1a1a1a]">Add cultural entry</h3>
         <form className="space-y-4 text-sm" onSubmit={(e) => e.preventDefault()}>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-[0.24em] text-[#555555] mb-2">
               Title
             </label>
             <input
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 focus:outline-none focus:border-saffron"
+              className={INPUT_CLASS}
               placeholder="e.g. Pushkar Camel Fair"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-[0.24em] text-[#555555] mb-2">
                 State
               </label>
-              <select className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 focus:outline-none focus:border-saffron">
+              <select className={INPUT_CLASS}>
                 {STATE_LIST.map((s) => (
                   <option key={s.id}>{s.name}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-[0.24em] text-[#555555] mb-2">
                 Category
               </label>
-              <select className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 focus:outline-none focus:border-saffron">
+              <select className={INPUT_CLASS}>
                 <option>Festival</option>
                 <option>Food</option>
                 <option>Art</option>
@@ -423,32 +464,35 @@ function FestivalsView() {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-[0.24em] text-[#555555] mb-2">
               Description
             </label>
             <textarea
               rows={5}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-saffron resize-none"
+              className={INPUT_CLASS + " resize-none py-3"}
               placeholder="Tell the story…"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-[0.24em] text-[#555555] mb-2">
               Image
             </label>
-            <div className="border-2 border-dashed border-white/15 rounded-xl p-8 text-center hover:border-saffron/60 transition-colors cursor-pointer">
+            <div className="border-2 border-dashed border-[rgba(0,0,0,0.12)] rounded-xl bg-[#FFFDF7] p-8 text-center hover:border-[#FF6F00]/60 transition-colors cursor-pointer">
               <div className="text-3xl mb-2">📤</div>
-              <div className="text-sm text-muted-foreground">Drop image or click to upload</div>
+              <div className="text-sm text-[#555555]">Drop image or click to upload</div>
             </div>
           </div>
-          <button className="w-full py-3 rounded-full text-sm font-semibold text-white saffron-gradient">
+          <button
+            className="w-full py-3 rounded-full text-sm font-semibold text-white shadow-[0_14px_28px_rgba(255,111,0,0.24)]"
+            style={{ background: "linear-gradient(135deg, #FF6F00 0%, #FF8F3D 100%)" }}
+          >
             Save entry
           </button>
         </form>
       </div>
 
-      <div className="glass-dark rounded-2xl p-6">
-        <h3 className="font-display text-lg font-semibold mb-4">Recent festivals</h3>
+      <div className={PANEL_CLASS + " p-6"}>
+        <h3 className="font-display text-lg font-semibold mb-4 text-[#1a1a1a]">Recent festivals</h3>
         <div className="space-y-3">
           {STATE_LIST.flatMap((s) =>
             s.festivals
@@ -457,14 +501,14 @@ function FestivalsView() {
           ).map((f, i) => (
             <div
               key={i}
-              className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors"
+              className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#FFF8ED] transition-colors"
             >
               <div className="w-12 h-12 rounded-lg shrink-0" style={{ background: f.gradient }} />
               <div className="min-w-0 flex-1">
-                <div className="font-semibold text-sm truncate">{f.title}</div>
-                <div className="text-xs text-muted-foreground truncate">{f.state}</div>
+                <div className="font-semibold text-sm truncate text-[#1a1a1a]">{f.title}</div>
+                <div className="text-xs text-[#555555] truncate">{f.state}</div>
               </div>
-              <button className="p-2 rounded-lg hover:bg-white/10">
+              <button className="p-2 rounded-lg hover:bg-[#FFF4E8]">
                 <Edit2 className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -488,19 +532,22 @@ function UsersView() {
     { name: "Arjun Singh", email: "arjun@example.com", joined: "Apr 2026", state: "Punjab" },
   ];
   return (
-    <div className="glass-dark rounded-2xl p-6 animate-fade-up">
+    <div className={PANEL_CLASS + " p-6 animate-fade-up"}>
       <div className="space-y-2">
         {users.map((u) => (
-          <div key={u.email} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5">
-            <div className="w-10 h-10 rounded-full saffron-gradient flex items-center justify-center text-white font-bold text-sm">
+          <div key={u.email} className="flex items-center gap-4 p-3 rounded-xl hover:bg-[#FFF8ED]">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"
+              style={{ background: "linear-gradient(135deg, #FF6F00 0%, #FF8F3D 100%)" }}
+            >
               {u.name[0]}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-sm">{u.name}</div>
-              <div className="text-xs text-muted-foreground">{u.email}</div>
+              <div className="font-semibold text-sm text-[#1a1a1a]">{u.name}</div>
+              <div className="text-xs text-[#555555]">{u.email}</div>
             </div>
-            <div className="text-xs text-muted-foreground">Following {u.state}</div>
-            <div className="text-xs text-muted-foreground">{u.joined}</div>
+            <div className="text-xs text-[#555555]">Following {u.state}</div>
+            <div className="text-xs text-[#555555]">{u.joined}</div>
           </div>
         ))}
       </div>
@@ -514,8 +561,8 @@ function AnalyticsView() {
 
 function SettingsView() {
   return (
-    <div className="glass-dark rounded-2xl p-8 animate-fade-up max-w-2xl">
-      <h3 className="font-display text-xl font-semibold mb-6">Platform settings</h3>
+    <div className={PANEL_CLASS + " p-8 animate-fade-up max-w-2xl"}>
+      <h3 className="font-display text-xl font-semibold mb-6 text-[#1a1a1a]">Platform settings</h3>
       <div className="space-y-5 text-sm">
         {[
           "Public registration",
@@ -524,10 +571,10 @@ function SettingsView() {
           "Allow user submissions",
         ].map((s) => (
           <div key={s} className="flex items-center justify-between">
-            <span>{s}</span>
+            <span className="text-[#1a1a1a]">{s}</span>
             <label className="relative inline-flex h-6 w-11 cursor-pointer items-center">
               <input type="checkbox" defaultChecked className="peer sr-only" />
-              <span className="absolute inset-0 rounded-full bg-white/15 transition peer-checked:bg-saffron" />
+              <span className="absolute inset-0 rounded-full bg-[#E9E1D7] transition peer-checked:bg-[#FF6F00]" />
               <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition peer-checked:translate-x-5" />
             </label>
           </div>

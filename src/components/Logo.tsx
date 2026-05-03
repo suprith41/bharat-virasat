@@ -1,8 +1,14 @@
-export function Logo({ className = "h-8 w-8" }: { className?: string }) {
+export function Logo({
+  className = "h-8 w-8",
+  color = "var(--peacock)",
+}: {
+  className?: string;
+  color?: string;
+}) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
-      <circle cx="32" cy="32" r="28" fill="none" stroke="var(--peacock)" strokeWidth="3" />
-      <circle cx="32" cy="32" r="6" fill="var(--peacock)" />
+      <circle cx="32" cy="32" r="28" fill="none" stroke={color} strokeWidth="3" />
+      <circle cx="32" cy="32" r="6" fill={color} />
       {Array.from({ length: 24 }).map((_, i) => {
         const a = (i * Math.PI * 2) / 24;
         const x1 = 32 + Math.cos(a) * 8;
@@ -16,7 +22,7 @@ export function Logo({ className = "h-8 w-8" }: { className?: string }) {
             y1={y1}
             x2={x2}
             y2={parseFloat(y2.toFixed(2))}
-            stroke="var(--peacock)"
+            stroke={color}
             strokeWidth="1.5"
             strokeLinecap="round"
           />

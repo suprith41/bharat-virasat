@@ -14,23 +14,19 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const onHero = path === "/";
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30);
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => setOpen(false), [path]);
 
-  const transparent = onHero && !scrolled;
-
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        transparent ? "bg-transparent" : "glass-strong"
+        scrolled ? "bg-white/70 backdrop-blur-md shadow-sm" : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
@@ -58,9 +54,7 @@ export function Navbar() {
                 }`}
               >
                 {n.label}
-                {active && (
-                  <span className="absolute inset-x-3 -bottom-0.5 h-[2px] rounded-full saffron-gradient" />
-                )}
+                {active && <span className="absolute inset-x-3 -bottom-0.5 h-[2px] rounded-full saffron-gradient" />}
               </Link>
             );
           })}
@@ -98,7 +92,7 @@ export function Navbar() {
               <Link
                 key={n.to}
                 to={n.to}
-                className="block px-4 py-3 rounded-xl text-base font-medium hover:bg-secondary"
+                className="block px-4 py-3 rounded-xl text-base font-medium text-gray-800 hover:bg-secondary"
               >
                 {n.label}
               </Link>
@@ -106,7 +100,7 @@ export function Navbar() {
             <div className="pt-3 grid grid-cols-2 gap-2">
               <Link
                 to="/login"
-                className="px-4 py-2.5 rounded-full text-center text-sm font-medium border border-border"
+                className="px-4 py-2.5 rounded-full text-center text-sm font-medium border border-border text-gray-800"
               >
                 Login
               </Link>

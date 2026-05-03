@@ -195,10 +195,12 @@
 @layer base {
   * {
     border-color: var(--color-border);
+    cursor: auto;
   }
-  .custom-cursor-enabled[data-cursor-enabled="true"],
-  .custom-cursor-enabled[data-cursor-enabled="true"] * {
-    cursor: none !important;
+  a,
+  button,
+  [role="button"] {
+    cursor: pointer;
   }
   html {
     scroll-behavior: smooth;
@@ -213,165 +215,36 @@
     font-family: var(--font-display);
     letter-spacing: -0.01em;
   }
-
-  #cursor-dot {
-    width: 6px;
-    height: 6px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 100001;
-    will-change: transform, opacity;
-    transition:
-      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-      opacity 0.2s ease,
-      filter 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-    opacity: 0;
+  ::selection {
+    background-color: #FF6F00;
+    color: #ffffff;
+  }
+  ::-moz-selection {
+    background-color: #FF6F00;
+    color: #ffffff;
   }
 
-  #cursor-dot .cursor-dot-visual {
-    width: 100%;
-    height: 100%;
-    background: #f5f0e8;
-    border-radius: 9999px;
-    box-shadow: 0 0 6px 2px rgb(245 240 232 / 0.8);
-    animation: cursorPulse 2.2s ease-in-out infinite;
-    transition:
-      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-      background-color 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-      box-shadow 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  #cursor-ring {
-    width: 28px;
-    height: 28px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 100000;
-    will-change: transform, opacity;
-    transition:
-      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-      opacity 0.2s ease,
-      filter 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-    opacity: 0;
-  }
-
-  #cursor-ring .cursor-ring-visual {
-    width: 100%;
-    height: 100%;
-    border: 1.5px dashed #000000;
-    border-radius: 9999px;
-    opacity: 0.85;
-    animation: rotateCursor 3s linear infinite;
-    transition:
-      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-      opacity 0.2s ease,
-      border-color 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-      box-shadow 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-      background-color 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-      border-style 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  #cursor-aura {
-    width: 55px;
-    height: 55px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    border-radius: 9999px;
-    pointer-events: none;
-    z-index: 99999;
-    mix-blend-mode: normal;
-    will-change: transform, opacity;
-    transition:
-      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-      opacity 0.2s ease,
-      filter 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-    opacity: 0;
-  }
-
-  #cursor-aura .cursor-aura-visual {
-    width: 100%;
-    height: 100%;
-    border-radius: 9999px;
-    background: radial-gradient(circle, rgb(0 0 0 / 0.12) 0%, transparent 70%);
-    transition:
-      transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
-      opacity 0.2s ease,
-      filter 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  #cursor-dot[data-visible="true"],
-  #cursor-ring[data-visible="true"] {
-    opacity: 1;
-  }
-
-  #cursor-aura[data-visible="true"] {
-    opacity: 1;
-  }
-
-  #cursor-dot[data-interactive="true"] .cursor-dot-visual {
-    background: #000000;
-    transform: scale(2);
-  }
-
-  #cursor-ring[data-interactive="true"] .cursor-ring-visual {
-    transform: scale(2.5);
-    border-style: solid;
-    border-color: #000000;
-    box-shadow: 0 0 12px rgb(0 0 0 / 0.6);
-  }
-
-  #cursor-aura[data-interactive="true"] .cursor-aura-visual {
-    transform: scale(1.5);
-    filter: brightness(1.2);
-  }
-
-  #cursor-dot[data-clicking="true"] .cursor-dot-visual {
-    transform: scale(2.6);
-  }
-
-  #cursor-ring[data-clicking="true"] .cursor-ring-visual {
-    border-color: #000000;
-    box-shadow: 0 0 16px rgb(0 0 0 / 0.75);
-  }
-
-  @keyframes rotateCursor {
-    from {
-      transform: rotate(0deg);
-    }
+  @keyframes ripple-out {
     to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes cursorPulse {
-    0%, 100% {
-      box-shadow: 0 0 6px 2px rgb(245 240 232 / 0.8);
-    }
-    50% {
-      box-shadow: 0 0 12px 5px rgb(245 240 232 / 0.4);
-    }
-  }
-
-  @media (hover: none) {
-    #cursor-dot,
-    #cursor-ring,
-    #cursor-aura {
-      display: none;
-    }
-
-    .custom-cursor-enabled[data-cursor-enabled="true"],
-    .custom-cursor-enabled[data-cursor-enabled="true"] * {
-      cursor: auto !important;
+      transform: scale(4);
+      opacity: 0;
     }
   }
 }
 
 @layer components {
+  .has-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    background-color: rgba(255, 111, 0, 0.35);
+    pointer-events: none;
+    animation: ripple-out 600ms ease-out forwards;
+  }
   .glass {
     background: color-mix(in oklab, white 55%, transparent);
     backdrop-filter: blur(16px) saturate(140%);

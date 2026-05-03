@@ -6,8 +6,8 @@ import {
   Scripts,
   useRouterState,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 import appCss from "../styles.css?url";
-import { CustomCursor } from "@/components/CustomCursor";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -36,7 +36,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Bharat Virasat — Discover the Soul of India" },
+      { title: "Bharat Virasat" },
       {
         name: "description",
         content:
@@ -54,6 +54,9 @@ export const Route = createRootRoute({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "apple-touch-icon", href: "/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -84,18 +87,102 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const isAdmin = path.startsWith("/admin");
-  const isLogin = path === "/login";
-  const isAuth = isLogin || path === "/register";
-  return (
-    <div
-      className={
-        isAdmin
-          ? "dark min-h-screen bg-background custom-cursor-enabled"
-          : "min-h-screen bg-background custom-cursor-enabled"
+  const isAuth = path === "/login" || path === "/register";
+
+  useEffect(() => {
+    const cleanupMap = new Map<Element, EventListener>();
+    const interactiveSelector = [
+      "button",
+      "a",
+      "[role='button']",
+      "[data-state]",
+      "[data-slot='card']",
+      ".glass",
+      ".glass-strong",
+      ".lift-on-hover",
+      ".saffron-gradient",
+    ].join(", ");
+
+    const resolveRippleColor = (target: HTMLElement) => {
+      const backgroundColor = window.getComputedStyle(target).backgroundColor;
+      const channels = backgroundColor.match(/[\d.]+/g);
+      if (!channels || channels.length < 3) {
+        return "rgba(255, 111, 0, 0.3)";
       }
-      data-cursor-enabled={!isLogin}
-    >
-      {!isLogin && <CustomCursor />}
+
+      const [r, g, b, a = "1"] = channels.map(Number);
+      if (a < 0.12) {
+        return "rgba(255, 111, 0, 0.3)";
+      }
+
+      const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+      return luminance < 0.62 ? "rgba(255, 255, 255, 0.4)" : "rgba(255, 111, 0, 0.3)";
+    };
+
+    const attachRipple = (el: Element) => {
+      if (!(el instanceof HTMLElement) || cleanupMap.has(el)) return;
+
+      el.classList.add("has-ripple");
+
+      const onClick: EventListener = (e) => {
+        const mouseEvent = e as MouseEvent;
+        const target = el as HTMLElement;
+        const rect = target.getBoundingClientRect();
+
+        const x = mouseEvent.clientX - rect.left;
+        const y = mouseEvent.clientY - rect.top;
+
+        const size = Math.sqrt(Math.pow(rect.width, 2) + Math.pow(rect.height, 2)) * 2;
+
+        const ripple = document.createElement("span");
+        ripple.classList.add("ripple");
+        ripple.style.width = `${size}px`;
+        ripple.style.height = `${size}px`;
+        ripple.style.left = `${x - size / 2}px`;
+        ripple.style.top = `${y - size / 2}px`;
+        ripple.style.backgroundColor = resolveRippleColor(target);
+
+        target.appendChild(ripple);
+
+        ripple.addEventListener("animationend", () => {
+          ripple.remove();
+        });
+      };
+
+      el.addEventListener("click", onClick);
+      cleanupMap.set(el, onClick);
+    };
+
+    const hydrateRipples = (root: ParentNode = document) => {
+      root.querySelectorAll(interactiveSelector).forEach(attachRipple);
+    };
+
+    hydrateRipples();
+
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        mutation.addedNodes.forEach((node) => {
+          if (!(node instanceof HTMLElement)) return;
+          if (node.matches(interactiveSelector)) {
+            attachRipple(node);
+          }
+          hydrateRipples(node);
+        });
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      cleanupMap.forEach((listener, el) => {
+        el.removeEventListener("click", listener);
+      });
+    };
+  }, [path]);
+
+  return (
+    <div className={isAdmin ? "dark min-h-screen bg-background" : "min-h-screen bg-background"}>
       {!isAdmin && !isAuth && <Navbar />}
       <main className={!isAdmin && !isAuth ? "pt-0" : ""}>
         <Outlet />
